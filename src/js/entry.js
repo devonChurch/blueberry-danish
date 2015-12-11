@@ -1,2 +1,2 @@
 require('../sass/style.scss');
-require('./location-pin');
+require('./pin');

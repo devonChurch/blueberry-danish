@@ -1,6 +1,40 @@
 const $ = require('jquery');
+const Ring = require('./ring');
+const Circle = require('./circle');
+const Triangle = require('./triangle');
 
-// location pin
+const Pin = class {
+
+	constructor() {
+
+		console.log('new Pin instance');
+
+		this.dots = [];
+		this.size = 600;
+		this.center = this.size / 2;
+		this.ctx = this.generateCanvas();
+		this.Ring = new Ring(this);
+		this.Circle = new Circle(this);
+		this.Triangle = new Triangle(this);
+
+	}
+
+	generateCanvas() {
+
+		const $canvas = $(`<canvas class="location-pin" width="${this.size}" height="${this.size}" />`);
+
+		$('body').append($canvas);
+
+		return $canvas[0].getContext('2d');
+
+	}
+
+};
+
+module.expprts = new Pin();
+
+
+/*
 
 var $canvas = $('#icon');
 var ctx = $canvas[0].getContext('2d');
@@ -8,23 +42,6 @@ var black = 'rgb(0, 0, 0)';
 var white = 'rgb(255, 255, 255)';
 var red = 'rgb(255, 0, 0)';
 window.requestAnimationFrame(manipulateDots);
-
-/*ctx.beginPath();
-ctx.arc(150, 150, 150, 0, Math.PI * 2, true);
-ctx.fillStyle = black;
-ctx.fill();
-
-ctx.beginPath();
-ctx.arc(150, 150, 50, 0, Math.PI * 2, true);
-ctx.fillStyle = white;
-ctx.fill();
-
-ctx.beginPath();
-ctx.moveTo(150 - 40, 280);
-ctx.lineTo(150, 340);
-ctx.lineTo(150 + 40, 280);
-ctx.fillStyle = black;
-ctx.fill();*/
 
 function randomise(min, max) {
 
@@ -38,7 +55,7 @@ function testCircleRelevance(x, y) {
 	var height = y > 150 ? y - 150 : 150 - y;
 	var radius = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 
-	/*console.log(`width = ${width} | height = ${height} | radius = ${radius}`);*/
+	// console.log(`width = ${width} | height = ${height} | radius = ${radius}`);
 
 	return radius < 150 && radius > 50 ? true : false;
 
@@ -63,14 +80,14 @@ function testPointRelevance(x, y) {
 	if (width * ratio > height) {
 		console.log(`x = ${x} | y = ${y} | width = ${width} | height = ${height} | ratio = ${width * ratio}`);
 
-		/*var offset = x > 150 ? x - width : x + width;
-		ctx.beginPath();
-		ctx.moveTo(x, y);
-		ctx.lineTo(x, 280);
-		ctx.lineTo(offset, 280);
-		ctx.lineTo(x, y);
-		ctx.strokeStyle = red;
-		ctx.stroke();*/
+		// var offset = x > 150 ? x - width : x + width;
+		// ctx.beginPath();
+		// ctx.moveTo(x, y);
+		// ctx.lineTo(x, 280);
+		// ctx.lineTo(offset, 280);
+		// ctx.lineTo(x, y);
+		// ctx.strokeStyle = red;
+		// ctx.stroke();
 	}
 
 	return width * ratio > height ? true : false; // length < pointMatch ? true : false;
@@ -133,3 +150,5 @@ function buildStencil() {
 	ctx.stroke();
 
 }
+
+*/

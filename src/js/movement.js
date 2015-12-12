@@ -9,7 +9,7 @@ const Movement = class {
 		this.Pin = Pin;
 		this.Dots = Dots;
 
-		this.updateDotProperties();
+		// this.updateDotProperties();
 
 	}
 
@@ -19,14 +19,152 @@ const Movement = class {
 
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
-			const increment = 1;
+			// const increment = 2;
+			// instances[i].x = this.Pin.Helper.boolean() ? instances[i].x += increment : instances[i].x -= increment;
+			// instances[i].y = this.Pin.Helper.boolean() ? instances[i].y += increment : instances[i].y -= increment;
 
-			instances[i].x = this.Pin.Helper.boolean() ? instances[i].x += increment : instances[i].x -= increment;
-			instances[i].y = this.Pin.Helper.boolean() ? instances[i].y += increment : instances[i].y -= increment;
+			// const instance = instances[i];
+
+			const properties = this.updateAngle(instances[i]);
+			console.log(properties);
+			instances[i].angle = properties.angle;
+			instances[i].x = properties.x;
+			instances[i].y = properties.y;
 
 		}
 
 		this.Dots.instances = instances;
+
+	}
+
+	updateAngle(instance) {
+
+		// let angle = instance.angle;
+		const offset = this.calculateOffset();
+			// console.log(`offset = ${offset}`);
+		const angle = this.rebase360(instance.angle, offset);
+			console.log(`angle = ${angle}`);
+		const quadrant = this.quadrantProperties(angle);
+			// console.log(`quadrant = ${quadrant}`);
+		const trajectory = this.calculateTrajectory(angle, quadrant);
+			// console.log(`trajectory = ${trajectory}`);
+
+		const coordinates = this.updateCoordinates(instance, quadrant, trajectory);
+
+		return {
+			angle: angle,
+			x: coordinates.x,
+			y: coordinates.y
+		};
+
+		// calculateOffset
+		// rebase360
+		// quadrantProperties
+		// calculateTrajectory
+		// updateCoordinates
+
+
+
+
+
+	}
+
+	calculateOffset() {
+
+		const max = 1;
+		const offset = this.Pin.Helper.randomise({max});
+
+		return offset;
+
+	}
+
+	rebase360(angle, offset) {
+
+		console.log(angle, offset);
+
+		angle = this.Pin.Helper.boolean() ? angle += offset : angle -= offset;
+
+		// return angle < 0 ? 360 - (angle * -1) : angle > 360 ? angle - 360 : angle;
+
+		if (angle < 0) {
+
+			angle = 360 - (angle * -1);
+
+		} else if (angle > 360) {
+
+			angle = angle - 360;
+
+		}
+
+		return angle;
+
+	}
+
+
+	quadrantProperties(angle) {
+
+		let properties = {};
+
+		if (angle > 0 && angle <= 90) {
+
+			// console.log('1 -- 90');
+			properties.location = 0;
+			properties.positiveX = true;
+			properties.positiveY = true;
+			properties.invert = true;
+
+		} else if (angle > 90 && angle <= 180) {
+
+			// console.log('91 -- 180');
+			properties.location = 1;
+			properties.positiveX = true;
+			properties.positiveY = false;
+			properties.invert = false;
+
+		} else if (angle > 180 && angle <= 270) {
+
+			// console.log('181 -- 270');
+			properties.location = 2;
+			properties.positiveX = false;
+			properties.positiveY = false;
+			properties.invert = true;
+
+		} else { // 271 -- 360 / 0
+
+			// console.log('271 -- 360 / 0');
+			properties.location = 3;
+			properties.positiveX = false;
+			properties.positiveY = true;
+			properties.invert = false;
+
+		}
+
+		return properties;
+
+	}
+
+	calculateTrajectory(angle, quadrant) {
+
+		let trajectory = angle - (quadrant.location * 90);
+
+		return quadrant.invert ? 90 - trajectory : trajectory;
+
+	}
+
+	updateCoordinates(instance, quadrant, trajectory) {
+
+		const width = Math.cos(trajectory) * 2;
+		const height = Math.sin(trajectory) * 2;
+		const x = quadrant.positiveX ? instance.x +=  width : instance.x -=  width;
+		const y = quadrant.positiveY ? instance.y +=  height : instance.y -=  height;
+
+		// console.log(`triangle = d(${trajectory}), w(${width}), h(${height}), x(${x}), y(${y})`);
+
+		return {x, y};
+
+		// instance.x = x;
+		// instance.y = y;
+
 	}
 
 };

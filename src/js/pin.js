@@ -14,11 +14,12 @@ const Pin = class {
 		this.size = 1000;
 		this.center = this.size / 2;
 		this.ctx = this.generateCanvas();
+
 		this.Helper = new Helper(this);
-		this.Dots = new Dots(this); // new Generate(); // new Placement
 		this.Ring = new Ring(this);
 		this.Circle = new Circle(this);
 		this.Triangle = new Triangle(this);
+		this.Dots = new Dots(this); // new Generate(); // new Placement
 
 	}
 

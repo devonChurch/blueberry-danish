@@ -10,7 +10,7 @@ const Dots = class {
 
 		this.Pin = Pin;
 		this.radius = 5;
-		this.total = 1000;
+		this.total = 100;
 		this.color = this.setColors();
 		console.log(this.color);
 		this.instances = [];

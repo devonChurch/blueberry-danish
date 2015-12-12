@@ -11,6 +11,7 @@ const Generate = class {
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
+		console.log(`this.displacement lenght = ${this.displacement.length}`);
 		console.log(this.displacement);
 		this.Dots.instances = this.generateCoordinates();
 		console.log(this.Dots.instances);
@@ -40,7 +41,9 @@ const Generate = class {
 
 		for (let i = 2; i < this.steps; i += 1) {
 
+			// displacement[i] = Math.ceil(displacement[i - 1] * increment);
 			displacement[i] = displacement[i - 1] * increment;
+			// displacement[i] = Math.floor(displacement[i - 1] * increment);
 
 		}
 
@@ -67,8 +70,10 @@ const Generate = class {
 
 	setDisplacement() {
 
-		const instance = this.Pin.Helper.randomise({max: this.steps});
+		const instance = this.Pin.Helper.randomise({max: this.steps - 1});
 		const displacement = this.displacement[instance];
+
+		if (displacement > this.Pin.center) { console.log(`displacement > center! -> displacement = ${displacement}`); }
 
 		return displacement;
 
@@ -76,17 +81,20 @@ const Generate = class {
 
 	setXaxis(displacement) {
 
-		const location = this.Pin.Helper.randomise({max: displacement});
+		const x = this.Pin.Helper.randomise({max: Math.floor(displacement)});
 
-		return location;
+		// if (x > this.Pin.center) { console.log(`x > center! -> x = ${x}`); }
+
+		return x;
 
 	}
 
 	setYaxis(x, displacement) {
 
-		const location = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
+		const y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
 
-		return location;
+		if (isNaN(y)) { console.log(`NAN! -> x = ${x} | d = ${displacement}`); }
+		return y;
 
 	}
 

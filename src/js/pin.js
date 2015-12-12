@@ -11,7 +11,7 @@ const Pin = class {
 
 		console.log('new Pin instance');
 
-		this.size = 600;
+		this.size = 1000;
 		this.center = this.size / 2;
 		this.ctx = this.generateCanvas();
 		this.Helper = new Helper(this);

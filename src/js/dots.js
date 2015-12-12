@@ -10,15 +10,24 @@ const Dots = class {
 		this.Pin = Pin;
 		this.radius = 5;
 		this.total = 1000;
+		this.color = this.setColors();
+		console.log(this.color);
 		this.instances = [];
 		this.Generate = new Generate(Pin, this);
 
 
 	}
 
-	renderDots() {
+	setColors() {
 
-		console.log('Render dots...');
+		return {
+			light: '#13B5EA',
+			dark: '#0D85AB' // '#1E3240'
+		};
+
+	}
+
+	renderDots() {
 
 		for (let i = 0; i < this.total; i += 1) {
 
@@ -32,12 +41,10 @@ const Dots = class {
 	placeOnCanvas(instance) {
 
 		const ctx = this.Pin.ctx;
-		const x = instance[0];
-		const y = instance[1];
 
 		ctx.beginPath();
-		ctx.arc(x, y, this.radius, 0, Math.PI * 2, true);
-		ctx.fillStyle = 'red';
+		ctx.arc(instance.x, instance.y, this.radius, 0, Math.PI * 2, true);
+		ctx.fillStyle = instance.color;
 		ctx.fill();
 
 	}

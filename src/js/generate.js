@@ -11,10 +11,10 @@ const Generate = class {
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
-		console.log(`this.displacement lenght = ${this.displacement.length}`);
-		console.log(this.displacement);
+		// console.log(`this.displacement lenght = ${this.displacement.length}`);
+		// console.log(this.displacement);
 		this.Dots.instances = this.generateCoordinates();
-		console.log(this.Dots.instances);
+		// console.log(this.Dots.instances);
 		this.Dots.renderDots();
 
 	}
@@ -26,6 +26,7 @@ const Generate = class {
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
 			instances[i] = this.locateDot();
+			instances[i].color = this.setColor();
 
 		}
 
@@ -41,9 +42,7 @@ const Generate = class {
 
 		for (let i = 2; i < this.steps; i += 1) {
 
-			// displacement[i] = Math.ceil(displacement[i - 1] * increment);
 			displacement[i] = displacement[i - 1] * increment;
-			// displacement[i] = Math.floor(displacement[i - 1] * increment);
 
 		}
 
@@ -83,8 +82,6 @@ const Generate = class {
 
 		const x = this.Pin.Helper.randomise({max: Math.floor(displacement)});
 
-		// if (x > this.Pin.center) { console.log(`x > center! -> x = ${x}`); }
-
 		return x;
 
 	}
@@ -94,6 +91,7 @@ const Generate = class {
 		const y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
 
 		if (isNaN(y)) { console.log(`NAN! -> x = ${x} | d = ${displacement}`); }
+
 		return y;
 
 	}
@@ -102,14 +100,25 @@ const Generate = class {
 
 		for (let i = 0; i < coordinates.length; i +=1) {
 
-			const reference = this.Pin.Helper.randomise({max: 1});
+
 			let center = this.Pin.center;
 
-			coordinates[i] = reference % 2 === 0 ? center += coordinates[i] : center -= coordinates[i];
+			coordinates[i] = this.Pin.Helper.boolean() === 0 ? center += coordinates[i] : center -= coordinates[i];
 
 		}
 
-		return coordinates;
+		return {
+			x: coordinates[0],
+			y: coordinates[1]
+		};
+
+	}
+
+	setColor() {
+
+		const tone = this.Pin.Helper.boolean() === 0 ? 'light' : 'dark';
+
+		return this.Dots.color[tone];
 
 	}
 

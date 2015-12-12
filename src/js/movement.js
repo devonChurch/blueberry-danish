@@ -1,87 +1,37 @@
 const $ = require('jquery');
-const Generate = require('./generate');
-const Movement = require('./movement');
 
-const Dots = class {
+const Movement = class {
 
-	constructor(Pin) {
+	constructor(Pin, Dots) {
 
-		console.log('new Dots instance');
+		console.log('new Movement instance');
 
 		this.Pin = Pin;
-		this.radius = 5;
-		this.total = 1000;
-		this.color = this.setColors();
-		console.log(this.color);
-		this.instances = [];
-		this.Generate = new Generate(Pin, this);
-		this.Movement = new Movement(Pin, this);
+		this.Dots = Dots;
 
-		this.moveDots();
-
+		this.updateDotProperties();
 
 	}
 
-	setColors() {
+	updateDotProperties() {
 
-		return {
-			light: '#13B5EA',
-			dark: '#0D85AB' // '#1E3240'
-		};
+		const instances = this.Dots.instances;
 
-	}
+		for (let i = 0; i < this.Dots.total; i += 1) {
 
-	renderDots() {
+			const increment = 1;
 
-		for (let i = 0; i < this.total; i += 1) {
-
-			const instance = this.instances[i];
-			this.placeOnCanvas(instance);
+			instances[i].x = this.Pin.Helper.boolean() ? instances[i].x += increment : instances[i].x -= increment;
+			instances[i].y = this.Pin.Helper.boolean() ? instances[i].y += increment : instances[i].y -= increment;
 
 		}
 
-	}
-
-	placeOnCanvas(instance) {
-
-		const ctx = this.Pin.ctx;
-
-		ctx.beginPath();
-		ctx.arc(instance.x, instance.y, this.radius, 0, Math.PI * 2, true);
-		ctx.fillStyle = instance.color;
-		ctx.fill();
-
-	}
-
-	moveDots() {
-
-		console.log('Moving....');
-
-		// const callback = this.moveDots;
-
-		this.Movement.updateDotProperties();
-		this.clearDots();
-		this.renderDots();
-
-		requestAnimationFrame(() => {
-
-			// callback();
-
-			this.moveDots();
-
-		});
-
-	}
-
-	clearDots() {
-
-		this.Pin.ctx.clearRect(0, 0, this.Pin.size, this.Pin.size);
-
+		this.Dots.instances = instances;
 	}
 
 };
 
-module.exports = Dots;
+module.exports = Movement;
 
 
 /*

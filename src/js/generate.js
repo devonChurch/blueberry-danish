@@ -103,7 +103,7 @@ const Generate = class {
 
 			let center = this.Pin.center;
 
-			coordinates[i] = this.Pin.Helper.boolean() === 0 ? center += coordinates[i] : center -= coordinates[i];
+			coordinates[i] = this.Pin.Helper.boolean() ? center += coordinates[i] : center -= coordinates[i];
 
 		}
 
@@ -116,7 +116,7 @@ const Generate = class {
 
 	setColor() {
 
-		const tone = this.Pin.Helper.boolean() === 0 ? 'light' : 'dark';
+		const tone = this.Pin.Helper.boolean() ? 'light' : 'dark';
 
 		return this.Dots.color[tone];
 

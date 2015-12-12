@@ -18,7 +18,7 @@ const Helper = class {
 
 	boolean() {
 
-		return this.randomise({max: 1}) % 2;
+		return this.randomise({max: 1}) % 2 === 0 ? false : true;
 
 	}
 

@@ -1,40 +1,113 @@
 const $ = require('jquery');
-const Helper = require('./helper');
-const Dots = require('./dots');
-const Ring = require('./ring');
-const Circle = require('./circle');
-const Triangle = require('./triangle');
 
-const Pin = class {
+const Generate = class {
 
-	constructor() {
+	constructor(Pin, Dots) {
 
-		console.log('new Pin instance');
+		console.log('new Generate instance');
 
-		this.size = 600;
-		this.center = this.size / 2;
-		this.ctx = this.generateCanvas();
-		this.Helper = new Helper(this);
-		this.Dots = new Dots(this); // new Generate(); // new Placement
-		this.Ring = new Ring(this);
-		this.Circle = new Circle(this);
-		this.Triangle = new Triangle(this);
+		this.Pin = Pin;
+		this.Dots = Dots;
+		this.steps = 100;
+
+		this.displacement = this.generateDisplacement();
+		console.log(this.displacement);
+		this.Dots.instances = this.generateCoordinates();
+		console.log(this.Dots.instances);
+		this.Dots.renderDots();
 
 	}
 
-	generateCanvas() {
+	generateCoordinates() {
 
-		const $canvas = $(`<canvas class="location-pin" width="${this.size}" height="${this.size}" />`);
+		const instances = [];
 
-		$('body').append($canvas);
+		for (let i = 0; i < this.Dots.total; i += 1) {
 
-		return $canvas[0].getContext('2d');
+			instances[i] = this.locateDot();
+
+		}
+
+		return instances;
+
+	}
+
+	generateDisplacement() {
+
+		const max = this.Pin.center - this.Dots.radius;
+		const increment = Math.pow(max, 1 / (this.steps - 1));
+		let displacement = [0, increment];
+
+		for (let i = 2; i < this.steps; i += 1) {
+
+			displacement[i] = displacement[i - 1] * increment;
+
+		}
+
+		return displacement;
+
+	}
+
+	locateDot() {
+
+		// displacement = - / + ?
+		// random x value
+		// x = - / + ?
+		// find y with displacement and x
+		// y = - / + ?
+
+		const displacement = this.setDisplacement();
+		const x = this.setXaxis(displacement);
+		const y = this.setYaxis(x, displacement);
+		const coordinates = this.setOrientation(x, y);
+
+		return coordinates;
+
+	}
+
+	setDisplacement() {
+
+		const instance = this.Pin.Helper.randomise({max: this.steps});
+		const displacement = this.displacement[instance];
+
+		return displacement;
+
+	}
+
+	setXaxis(displacement) {
+
+		const location = this.Pin.Helper.randomise({max: displacement});
+
+		return location;
+
+	}
+
+	setYaxis(x, displacement) {
+
+		const location = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
+
+		return location;
+
+	}
+
+	setOrientation(...coordinates) {
+
+		for (let i = 0; i < coordinates.length; i +=1) {
+
+			const reference = this.Pin.Helper.randomise({max: 1});
+			let center = this.Pin.center;
+
+			coordinates[i] = reference % 2 === 0 ? center += coordinates[i] : center -= coordinates[i];
+
+		}
+
+		return coordinates;
 
 	}
 
 };
 
-module.exports = new Pin();
+module.exports = Generate;
 
 
 /*

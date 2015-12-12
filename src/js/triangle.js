@@ -6,7 +6,7 @@ const Triangle = class {
 
 	constructor(Pin) {
 
-		console.log('new Circle instance');
+		console.log('new Triangle instance');
 
 		this.Pin = Pin;
 		this.size = 84;

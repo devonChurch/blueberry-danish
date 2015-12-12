@@ -1,40 +1,24 @@
 const $ = require('jquery');
-const Helper = require('./helper');
-const Dots = require('./dots');
-const Ring = require('./ring');
-const Circle = require('./circle');
-const Triangle = require('./triangle');
 
-const Pin = class {
+const Helper = class {
 
-	constructor() {
+	constructor(Pin) {
 
-		console.log('new Pin instance');
+		console.log('new Helper instance');
 
-		this.size = 600;
-		this.center = this.size / 2;
-		this.ctx = this.generateCanvas();
-		this.Helper = new Helper(this);
-		this.Dots = new Dots(this); // new Generate(); // new Placement
-		this.Ring = new Ring(this);
-		this.Circle = new Circle(this);
-		this.Triangle = new Triangle(this);
+		this.Pin = Pin;
 
 	}
 
-	generateCanvas() {
+	randomise({min = 0, max}) {
 
-		const $canvas = $(`<canvas class="location-pin" width="${this.size}" height="${this.size}" />`);
-
-		$('body').append($canvas);
-
-		return $canvas[0].getContext('2d');
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 
 	}
 
 };
 
-module.exports = new Pin();
+module.exports = Helper;
 
 
 /*

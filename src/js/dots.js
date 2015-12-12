@@ -1,40 +1,50 @@
 const $ = require('jquery');
-const Helper = require('./helper');
-const Dots = require('./dots');
-const Ring = require('./ring');
-const Circle = require('./circle');
-const Triangle = require('./triangle');
+const Generate = require('./generate');
 
-const Pin = class {
+const Dots = class {
 
-	constructor() {
+	constructor(Pin) {
 
-		console.log('new Pin instance');
+		console.log('new Dots instance');
 
-		this.size = 600;
-		this.center = this.size / 2;
-		this.ctx = this.generateCanvas();
-		this.Helper = new Helper(this);
-		this.Dots = new Dots(this); // new Generate(); // new Placement
-		this.Ring = new Ring(this);
-		this.Circle = new Circle(this);
-		this.Triangle = new Triangle(this);
+		this.Pin = Pin;
+		this.radius = 5;
+		this.total = 1000;
+		this.instances = [];
+		this.Generate = new Generate(Pin, this);
+
 
 	}
 
-	generateCanvas() {
+	renderDots() {
 
-		const $canvas = $(`<canvas class="location-pin" width="${this.size}" height="${this.size}" />`);
+		console.log('Render dots...');
 
-		$('body').append($canvas);
+		for (let i = 0; i < this.total; i += 1) {
 
-		return $canvas[0].getContext('2d');
+			const instance = this.instances[i];
+			this.placeOnCanvas(instance);
+
+		}
+
+	}
+
+	placeOnCanvas(instance) {
+
+		const ctx = this.Pin.ctx;
+		const x = instance[0];
+		const y = instance[1];
+
+		ctx.beginPath();
+		ctx.arc(x, y, this.radius, 0, Math.PI * 2, true);
+		ctx.fillStyle = 'red';
+		ctx.fill();
 
 	}
 
 };
 
-module.exports = new Pin();
+module.exports = Dots;
 
 
 /*

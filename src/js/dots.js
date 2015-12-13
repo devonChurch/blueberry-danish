@@ -10,9 +10,8 @@ const Dots = class {
 
 		this.Pin = Pin;
 		this.radius = 5;
-		this.total = 100;
+		this.total = 500;
 		this.color = this.setColors();
-		console.log(this.color);
 		this.instances = [];
 		this.Generate = new Generate(Pin, this);
 		this.Movement = new Movement(Pin, this);
@@ -35,14 +34,19 @@ const Dots = class {
 
 		for (let i = 0; i < this.total; i += 1) {
 
-			const instance = this.instances[i];
-			this.placeOnCanvas(instance);
+			this.placeOnCanvas(this.instances[i]);
 
 		}
 
 	}
 
 	placeOnCanvas(instance) {
+
+		// if (instance.x > this.Pin.size || instance.y > this.Pin.size) {
+
+			// console.log(`x = ${instance.x} | y = ${instance.x}`);
+
+		// }
 
 		const ctx = this.Pin.ctx;
 
@@ -55,21 +59,17 @@ const Dots = class {
 
 	moveDots() {
 
-		console.log('Moving....');
+		// console.log('Moving....');
 
 		// const callback = this.moveDots;
 
 		this.Movement.updateDotProperties();
 		this.clearDots();
 		this.renderDots();
+		this.Pin.Ring.updateDimensions();
+		this.Pin.Circle.updateDimensions();
 
-		requestAnimationFrame(() => {
-
-			// callback();
-
-			this.moveDots();
-
-		});
+		requestAnimationFrame(() => this.moveDots());
 
 	}
 

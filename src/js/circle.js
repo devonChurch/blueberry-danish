@@ -9,9 +9,9 @@ const Circle = class {
 		console.log('new Circle instance');
 
 		this.Pin = Pin;
-		this.radius = 36;
 
-		this.generateStencil(); // for debuging ONLY
+		this.restingRadius = 36;
+		this.currentRadius = 10;
 
 	}
 
@@ -21,9 +21,27 @@ const Circle = class {
 		const center = this.Pin.center;
 
 		ctx.beginPath();
-		ctx.arc(center, center, this.radius, 0, Math.PI * 2, true);
+		ctx.arc(center, center, this.currentRadius, 0, Math.PI * 2, true);
 		ctx.strokeStyle = 'black';
 		ctx.stroke();
+
+	}
+
+	updateDimensions() {
+
+		if (this.currentRadius < this.restingRadius) {
+
+			this.currentRadius += 0.05;
+
+		}
+
+		// this.generateStencil(); // for debuging ONLY
+
+	}
+
+	testRelevance(hypotenuse) {
+
+		return hypotenuse < this.currentRadius ? true : false;
 
 	}
 

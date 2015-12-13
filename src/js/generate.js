@@ -11,8 +11,7 @@ const Generate = class {
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
-		// console.log(`this.displacement lenght = ${this.displacement.length}`);
-		// console.log(this.displacement);
+		console.log(this.displacement);
 		this.Dots.instances = this.generateCoordinates();
 		// console.log(this.Dots.instances);
 		this.Dots.renderDots();

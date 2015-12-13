@@ -9,25 +9,28 @@ const Movement = class {
 		this.Pin = Pin;
 		this.Dots = Dots;
 
-		// this.updateDotProperties();
-
 	}
 
 	updateDotProperties() {
+
+		// https://jsbin.com/suvebotoxi/edit?js,console
+		// https://jsbin.com/rivojuyixe/edit?js,console
 
 		const instances = this.Dots.instances;
 
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
-			// const increment = 2;
+			// const increment = 3;
 			// instances[i].x = this.Pin.Helper.boolean() ? instances[i].x += increment : instances[i].x -= increment;
 			// instances[i].y = this.Pin.Helper.boolean() ? instances[i].y += increment : instances[i].y -= increment;
 
-			// const instance = instances[i];
+			// const properties = this.updateAngle(instances[i]);
+			// console.log(properties);
+			// instances[i].angle = properties.angle;
+			// instances[i].x = properties.x;
+			// instances[i].y = properties.y;
 
-			const properties = this.updateAngle(instances[i]);
-			console.log(properties);
-			instances[i].angle = properties.angle;
+			const properties = this.getNewCoordinates(instances[i]);
 			instances[i].x = properties.x;
 			instances[i].y = properties.y;
 
@@ -37,13 +40,60 @@ const Movement = class {
 
 	}
 
+	getNewCoordinates(instance) {
+
+		const increment = 2;
+		let x;
+		let y;
+		let hypotenuse;
+
+		do {
+
+			x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
+			y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
+			hypotenuse = this.calculateHypotenuse(x, y);
+
+
+		} while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
+				!this.Pin.Circle.testRelevance(hypotenuse));
+
+		return {x, y};
+
+		// ctx.beginPath();
+		// ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+		// ctx.fillStyle = red;
+		// ctx.fill();
+
+	}
+
+	calculateHypotenuse(x, y) {
+
+		const center = this.Pin.center;
+		const width = x > center ? x - center : center - x;
+		const height = y > center ? y - center : center - y;
+
+		return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+
+	}
+
+
+
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+
 	updateAngle(instance) {
 
 		// let angle = instance.angle;
 		const offset = this.calculateOffset();
 			// console.log(`offset = ${offset}`);
 		const angle = this.rebase360(instance.angle, offset);
-			console.log(`angle = ${angle}`);
+			// console.log(`angle = ${angle}`);
 		const quadrant = this.quadrantProperties(angle);
 			// console.log(`quadrant = ${quadrant}`);
 		const trajectory = this.calculateTrajectory(angle, quadrant);

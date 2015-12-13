@@ -9,10 +9,12 @@ const Ring = class {
 		console.log('new Ring instance');
 
 		this.Pin = Pin;
-		this.radiusOuter = 150;
-		this.radiusInner = 104;
 
-		this.generateStencil(); // for debuging ONLY
+		this.restingOuter = 150;
+		this.restingInner = 104;
+
+		this.currentOuter = this.Pin.center;
+		this.currentInner = 0;
 
 	}
 
@@ -20,7 +22,7 @@ const Ring = class {
 
 		const ctx = this.Pin.ctx;
 		const center = this.Pin.center;
-		const radii = [this.radiusOuter, this.radiusInner];
+		const radii = [this.currentOuter, this.currentInner];
 
 		for (let i = 0; i < radii.length; i += 1) {
 
@@ -30,6 +32,30 @@ const Ring = class {
 			ctx.stroke();
 
 		}
+
+	}
+
+	updateDimensions() {
+
+		if (this.currentOuter > this.restingOuter) {
+
+			this.currentOuter -= 1;
+
+		}
+
+		if (this.currentInner < this.restingInner) {
+
+			this.currentInner += 0.25;
+
+		}
+
+		// this.generateStencil(); // for debuging ONLY
+
+	}
+
+	testRelevance(hypotenuse) {
+
+		return hypotenuse < this.currentOuter && hypotenuse > this.currentInner ? true : false;
 
 	}
 

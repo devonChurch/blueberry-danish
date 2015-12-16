@@ -56,8 +56,8 @@ const Dots = class {
 		this.Movement.updateDotProperties();
 		this.clearDots();
 		this.renderDots();
-		this.Pin.Ring.updateDimensions();
-		this.Pin.Circle.updateDimensions();
+		// this.Pin.Ring.updateDimensions();
+		// this.Pin.Circle.updateDimensions();
 		// this.showDebugTemplate(); // For debug only
 
 		requestAnimationFrame(() => this.moveDots());

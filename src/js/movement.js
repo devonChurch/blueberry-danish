@@ -8,6 +8,56 @@ const Movement = class {
 
 		this.Pin = Pin;
 		this.Dots = Dots;
+		this.angles = this.generateAngles();
+
+	}
+
+	generateAngles() {
+
+		let angles = [];
+
+		for (let i = 0; i < 90; i += 1) {
+
+			const offset = this.calculateOffset(i);
+
+			angles = this.reflectQuadrants(i, angles, offset.x, offset.y); // [i] = {x, y};
+
+		}
+
+		console.log(angles);
+
+		return angles;
+
+	}
+
+	convertToRadians(degrees) {
+
+		// radians : degrees = 1 : 57.2958
+		const ratio = 57.2958;
+
+		return degrees / ratio;
+
+	}
+
+	reflectQuadrants(i, angles, x, y) {
+
+		angles[i + (90 * 0)] = {x, y};
+		angles[i + (90 * 1)] = {x, y: y * -1};
+		angles[i + (90 * 2)] = {x: x * -1, y: y * -1};
+		angles[i + (90 * 3)] = {x: x * -1, y};
+
+		return angles;
+
+	}
+
+	calculateOffset(i) {
+
+		const displacement = 1;
+		const degrees = this.convertToRadians(i);
+		const x = Math.sin(degrees) * displacement;
+		const y = Math.cos(degrees) * displacement;
+
+		return {x, y};
 
 	}
 
@@ -48,16 +98,16 @@ const Movement = class {
 		let y;
 		let hypotenuse;
 
-		do {
+		// do {
 
 			x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
 			y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
 			hypotenuse = this.calculateHypotenuse(x, y);
 
 
-		} while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
-				!this.Pin.Circle.testRelevance(hypotenuse) &&
-				!this.Pin.Triangle.testRelevance(x, y));
+		// } while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
+		// 		!this.Pin.Circle.testRelevance(hypotenuse) &&
+		// 		!this.Pin.Triangle.testRelevance(x, y));
 
 		return {x, y};
 

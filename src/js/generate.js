@@ -25,7 +25,8 @@ const Generate = class {
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
 			instances[i] = this.locateDot();
-			instances[i].angle = this.setAngle();
+			instances[i].reference = this.setAngle();
+			instances[i].direction = this.setDirection();
 			instances[i].color = this.setColor();
 
 		}
@@ -115,6 +116,26 @@ const Generate = class {
 		const angle = this.Pin.Helper.randomise({max: 359});
 
 		return angle;
+
+	}
+
+	setDirection() {
+
+		const directions = [
+			-2, // Hard left
+			-1, // Left
+			0, // Straight
+			1, // Right
+			2  // Hard right
+		];
+		const option = this.Pin.Helper.randomise({max: directions.length - 1});
+
+		return directions[option];
+
+	}
+
+	setSpeed() {
+
 
 	}
 

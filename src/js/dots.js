@@ -10,7 +10,7 @@ const Dots = class {
 
 		this.Pin = Pin;
 		this.radius = 5;
-		this.total = 1;
+		this.total = 500;
 		this.color = this.setColors();
 		this.instances = [];
 		this.Generate = new Generate(Pin, this);

@@ -11,9 +11,7 @@ const Generate = class {
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
-		// console.log(this.displacement);
 		this.Dots.instances = this.generateCoordinates();
-		// console.log(this.Dots.instances);
 		this.Dots.renderDots();
 
 	}
@@ -24,12 +22,26 @@ const Generate = class {
 
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
-			instances[i] = this.locateDot();
-			instances[i].reference = this.setAngle();
-			instances[i].direction = this.setDirection();
-			instances[i].color = this.setColor();
+			const coordinates = this.locateDot();
+			const reference = this.setAngle();
+			const speed = this.setSpeed();
+			const steps = this.setSteps();
+			const color = this.setColor();
+
+			console.log(speed);
+
+			instances[i] = {
+				x: coordinates.x,
+				y: coordinates.y,
+				reference,
+				speed,
+				steps,
+				color
+			};
 
 		}
+
+		console.log(instances);
 
 		return instances;
 
@@ -70,8 +82,8 @@ const Generate = class {
 
 	setDisplacement() {
 
-		const instance = this.Pin.Helper.randomise({max: this.steps - 1});
-		const displacement = this.displacement[instance];
+		const i = this.Pin.Helper.randomise({max: this.steps - 1});
+		const displacement = this.displacement[i];
 
 		return displacement;
 
@@ -97,7 +109,6 @@ const Generate = class {
 
 		for (let i = 0; i < coordinates.length; i +=1) {
 
-
 			let center = this.Pin.center;
 
 			coordinates[i] = this.Pin.Helper.boolean() ? center += coordinates[i] : center -= coordinates[i];
@@ -119,23 +130,15 @@ const Generate = class {
 
 	}
 
-	setDirection() {
+	setSpeed() {
 
-		const directions = [
-			-2, // Hard left
-			-1, // Left
-			0, // Straight
-			1, // Right
-			2  // Hard right
-		];
-		const option = this.Pin.Helper.randomise({max: directions.length - 1});
-
-		return directions[option];
+		return this.Pin.Helper.randomise({min: 1, max: 3});
 
 	}
 
-	setSpeed() {
+	setSteps() {
 
+		return this.Pin.Helper.randomise({min: 20, max: 60});
 
 	}
 

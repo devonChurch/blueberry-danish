@@ -12,7 +12,7 @@ const Ring = class {
 		this.restingInner = 104;
 
 		this.currentOuter = this.Pin.center;
-		this.currentInner = 0;
+		this.currentInner = 32;
 
 	}
 

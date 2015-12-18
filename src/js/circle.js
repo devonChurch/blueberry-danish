@@ -9,7 +9,7 @@ const Circle = class {
 		this.Pin = Pin;
 
 		this.restingRadius = 36;
-		this.currentRadius = 10;
+		this.currentRadius = this.Pin.Ring.currentInner + 5; // Slight overlap with rings inner radius
 
 	}
 
@@ -27,9 +27,9 @@ const Circle = class {
 
 	updateDimensions() {
 
-		if (this.currentRadius < this.restingRadius) {
+		if (this.currentRadius > this.restingRadius) {
 
-			this.currentRadius += 0.05;
+			this.currentRadius -= 2;
 
 		}
 

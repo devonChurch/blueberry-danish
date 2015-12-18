@@ -9,7 +9,6 @@ const Movement = class {
 		this.Pin = Pin;
 		this.Dots = Dots;
 		this.angles = this.generateAngles();
-		console.log(this.angles);
 
 	}
 
@@ -81,17 +80,21 @@ const Movement = class {
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
 			const instance = instances[i];
+			const properties = this.scrutiniseRelevance(instance);
 
-			instance.steps = this.updateSteps(instance);
-			instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-			const coordinates = this.updateTrajectory(instance);
+			// if the relevance needed to be rectified then force steps update!
+			// instance.steps = this.updateSteps(instance);
+
+			// instance.steps = this.updateSteps(instance);
+			// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+			// const coordinates = this.updateTrajectory(instance);
 
 			instances[i] = {
-				x: this.Pin.Helper.round(coordinates.x),
-				y: this.Pin.Helper.round(coordinates.y),
-				reference: instance.reference,
+				x: this.Pin.Helper.round(properties.x),
+				y: this.Pin.Helper.round(properties.y),
+				reference: properties.reference,
 				speed: instance.speed,
-				steps: instance.steps.value,
+				steps: instance.steps, // instance.steps.value,
 				color: instance.color
 			};
 
@@ -111,10 +114,18 @@ const Movement = class {
 
 	}
 
-	updateAngle(instance) {
+	updateAngle({reference, relevance = true}) {
 
-		const i = this.Pin.Helper.randomise({min: 10, max: 45});
-		let reference = this.Pin.Helper.boolean() ? instance.reference -= i : instance.reference += i;
+		const min = relevance ? 10 : 30;
+		const max = relevance ? 45 : 45;
+		const i = this.Pin.Helper.randomise({min, max});
+		reference = this.Pin.Helper.boolean() && relevance ? reference -= i : reference += i;
+
+		// if (!relevance) {
+		//
+		// 	console.log(`hit wall! change to ${i} = ${reference}`);
+		//
+		// }
 
 		if (reference >= 360) {
 
@@ -130,12 +141,11 @@ const Movement = class {
 
 	}
 
-	updateTrajectory(instance) {
+	updateTrajectory(i, reference, x, y, speed) {
 
-		const i = instance.reference;
-		const angle = this.angles[i];
-		const x = angle.x < 0 ? instance.x -= (angle.x * instance.speed * -1) : instance.x += (angle.x * instance.speed);
-		const y = angle.y < 0 ? instance.y -= (angle.y * instance.speed * -1) : instance.y += (angle.y * instance.speed);
+		const angle = this.angles[reference];
+		x = angle.x < 0 ? x -= (angle.x * speed * -1) : x += (angle.x * speed);
+		y = angle.y < 0 ? y -= (angle.y * speed * -1) : y += (angle.y * speed);
 
 		// console.log(`instance.x = ${instance.x} vs angle.x = ${angle.x} | instance.y = ${instance.y} vs angle.y = ${angle.y}`);
 		// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
@@ -144,29 +154,54 @@ const Movement = class {
 
 	}
 
-	getNewCoordinates(instance) {
+	scrutiniseRelevance(instance) {
 
-		const increment = 1;
-		let x;
-		let y;
+		let reference = instance.reference;
+		let coordinates;
 		let hypotenuse;
+		let i = 0;
+
+		// update current trajectory
+		// test relevance
+		// if NOT relevant than pick another angle
 
 
+		// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+		// const coordinates = this.updateTrajectory(instance);
 
-		// do {
+		// instance.steps = this.updateSteps(instance);
 
-		// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
-		// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
-		// hypotenuse = this.calculateHypotenuse(x, y);
+		do {
+
+			reference = i === 0 ? reference : this.updateAngle({reference, relevance: false});
+			coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
+			hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
+
+			i += 1;
+
+			// if (i > 0) {
+			// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
+			// }
+
+			// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
+			// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
+			// hypotenuse = this.calculateHypotenuse(x, y);
 
 
+		// } while(!this.Pin.Ring.testRelevance(hypotenuse));
 
+		// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
+		// 		!this.Pin.Circle.testRelevance(hypotenuse));
 
-		// } while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
-		//    !this.Pin.Circle.testRelevance(hypotenuse) &&
-		//    !this.Pin.Triangle.testRelevance(x, y));
+		} while(!this.Pin.Ring.testRelevance(hypotenuse) &&
+				!this.Pin.Circle.testRelevance(hypotenuse) &&
+				!this.Pin.Triangle.testRelevance(coordinates.x, coordinates.y));
 
-		return {x, y};
+		return {
+			x: coordinates.x,
+			y: coordinates.y,
+			reference
+		};
 
 	}
 

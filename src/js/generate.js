@@ -128,7 +128,7 @@ const Generate = class {
 
 	setSpeed() {
 
-		return this.Pin.Helper.randomise({min: 1, max: 3});
+		return this.Pin.Helper.randomise({min: 2, max: 4});
 
 	}
 

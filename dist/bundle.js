@@ -64,135 +64,50 @@
 
 	'use strict';
 	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
 	var $ = __webpack_require__(6);
+	var Helper = __webpack_require__(7);
+	var Dots = __webpack_require__(8);
+	var Ring = __webpack_require__(11);
+	var Circle = __webpack_require__(12);
+	var Triangle = __webpack_require__(13);
 	
-	// location pin
+	var Pin = (function () {
+		function Pin() {
+			_classCallCheck(this, Pin);
 	
-	var $canvas = $('#icon');
-	var ctx = $canvas[0].getContext('2d');
-	var black = 'rgb(0, 0, 0)';
-	var white = 'rgb(255, 255, 255)';
-	var red = 'rgb(255, 0, 0)';
-	window.requestAnimationFrame(manipulateDots);
+			console.log('new Pin instance');
 	
-	/*ctx.beginPath();
-	ctx.arc(150, 150, 150, 0, Math.PI * 2, true);
-	ctx.fillStyle = black;
-	ctx.fill();
+			this.size = 1000;
+			this.center = this.size / 2;
+			this.ctx = this.generateCanvas();
 	
-	ctx.beginPath();
-	ctx.arc(150, 150, 50, 0, Math.PI * 2, true);
-	ctx.fillStyle = white;
-	ctx.fill();
-	
-	ctx.beginPath();
-	ctx.moveTo(150 - 40, 280);
-	ctx.lineTo(150, 340);
-	ctx.lineTo(150 + 40, 280);
-	ctx.fillStyle = black;
-	ctx.fill();*/
-	
-	function randomise(min, max) {
-	
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
-	
-	function testCircleRelevance(x, y) {
-	
-		var width = x > 150 ? x - 150 : 150 - x;
-		var height = y > 150 ? y - 150 : 150 - y;
-		var radius = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-	
-		/*console.log(`width = ${width} | height = ${height} | radius = ${radius}`);*/
-	
-		return radius < 150 && radius > 50 ? true : false;
-	}
-	
-	function testPointRelevance(x, y) {
-	
-		// var pointMatch = (Math.pow(10, 2) - Math.pow(5, 2));
-		// console.log(pointMatch);
-		// console.log(75 / 100);
-	
-		// 1.73205081
-	
-		// are we in the squares vicinity
-		if ((x < 150 - 40 || 150 + 40) && (y < 280 || y > 340)) {
-			return;
+			this.Helper = new Helper(this);
+			this.Ring = new Ring(this);
+			this.Circle = new Circle(this);
+			this.Triangle = new Triangle(this);
+			this.Dots = new Dots(this); // new Generate(); // new Placement
 		}
 	
-		var width = x > 150 ? 150 + 40 - x : x - (150 - 40); // x - (150 - 40) : (150 + 40) - x;
-		var height = y - 280;
-		var ratio = 1.73205081;
-		// var length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+		_createClass(Pin, [{
+			key: 'generateCanvas',
+			value: function generateCanvas() {
 	
-		if (width * ratio > height) {
-			console.log('x = ' + x + ' | y = ' + y + ' | width = ' + width + ' | height = ' + height + ' | ratio = ' + width * ratio);
+				var $canvas = $('<canvas class="location-pin" width="' + this.size + '" height="' + this.size + '" />');
 	
-			/*var offset = x > 150 ? x - width : x + width;
-	  ctx.beginPath();
-	  ctx.moveTo(x, y);
-	  ctx.lineTo(x, 280);
-	  ctx.lineTo(offset, 280);
-	  ctx.lineTo(x, y);
-	  ctx.strokeStyle = red;
-	  ctx.stroke();*/
-		}
+				$('body').append($canvas);
 	
-		return width * ratio > height ? true : false; // length < pointMatch ? true : false;
-	}
+				return $canvas[0].getContext('2d');
+			}
+		}]);
 	
-	function placeDot() {
+		return Pin;
+	})();
 	
-		var radius = 5;
-		var x;
-		var y;
-	
-		do {
-	
-			x = randomise(0, 300) - radius;
-			y = randomise(0, 350) - radius;
-		} while (!testCircleRelevance(x, y) && !testPointRelevance(x, y));
-	
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, Math.PI * 2, true);
-		ctx.fillStyle = red;
-		ctx.fill();
-	}
-	
-	function manipulateDots() {
-	
-		ctx.clearRect(0, 0, 300, 350);
-	
-		for (var i = 0; i < 1000; i += 1) {
-	
-			placeDot();
-		}
-	
-		// buildStencil();
-	
-		window.requestAnimationFrame(manipulateDots);
-	}
-	
-	function buildStencil() {
-	
-		ctx.beginPath();
-		ctx.arc(150, 150, 150, 0, Math.PI * 2, true);
-		ctx.strokeStyle = black;
-		ctx.stroke();
-	
-		ctx.beginPath();
-		ctx.arc(150, 150, 50, 0, Math.PI * 2, true);
-		ctx.strokeStyle = black;
-		ctx.stroke();
-	
-		ctx.beginPath();
-		ctx.moveTo(150 - 40, 280);
-		ctx.lineTo(150, 340);
-		ctx.lineTo(150 + 40, 280);
-		ctx.strokeStyle = black;
-		ctx.stroke();
-	}
+	module.exports = new Pin();
 
 /***/ },
 /* 6 */
@@ -9409,6 +9324,752 @@
 	
 	}));
 
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Helper = (function () {
+		function Helper(Pin) {
+			_classCallCheck(this, Helper);
+	
+			console.log('new Helper instance');
+	
+			this.Pin = Pin;
+		}
+	
+		_createClass(Helper, [{
+			key: 'randomise',
+			value: function randomise(_ref) {
+				var _ref$min = _ref.min;
+				var min = _ref$min === undefined ? 0 : _ref$min;
+				var max = _ref.max;
+	
+				return Math.floor(Math.random() * (max - min + 1)) + min;
+			}
+		}, {
+			key: 'boolean',
+			value: function boolean() {
+	
+				return this.randomise({ max: 1 }) % 2 === 0 ? false : true;
+			}
+		}, {
+			key: 'round',
+			value: function round(value) {
+	
+				return Math.round(value * 10) / 10;
+			}
+		}]);
+	
+		return Helper;
+	})();
+	
+	module.exports = Helper;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	var Generate = __webpack_require__(9);
+	var Movement = __webpack_require__(10);
+	
+	var Dots = (function () {
+		function Dots(Pin) {
+			_classCallCheck(this, Dots);
+	
+			console.log('new Dots instance');
+	
+			this.Pin = Pin;
+			this.radius = 5;
+			this.total = 500;
+			this.color = this.setColors();
+			this.instances = [];
+			this.Generate = new Generate(Pin, this);
+			this.Movement = new Movement(Pin, this);
+	
+			this.moveDots();
+		}
+	
+		_createClass(Dots, [{
+			key: 'setColors',
+			value: function setColors() {
+	
+				return {
+					light: '#13B5EA',
+					dark: '#0D85AB'
+				};
+			}
+		}, {
+			key: 'renderDots',
+			value: function renderDots() {
+	
+				for (var i = 0; i < this.total; i += 1) {
+	
+					this.placeOnCanvas(this.instances[i]);
+				}
+			}
+		}, {
+			key: 'placeOnCanvas',
+			value: function placeOnCanvas(instance) {
+	
+				var ctx = this.Pin.ctx;
+	
+				ctx.beginPath();
+				ctx.arc(instance.x, instance.y, this.radius, 0, Math.PI * 2, true);
+				ctx.fillStyle = instance.color;
+				ctx.fill();
+			}
+		}, {
+			key: 'moveDots',
+			value: function moveDots() {
+				var _this = this;
+	
+				this.Movement.updateDotProperties();
+				this.clearDots();
+				this.renderDots();
+				// this.Pin.Ring.updateDimensions();
+				// this.Pin.Circle.updateDimensions();
+				// this.showDebugTemplate(); // For debug only
+	
+				requestAnimationFrame(function () {
+					return _this.moveDots();
+				});
+			}
+		}, {
+			key: 'showDebugTemplate',
+			value: function showDebugTemplate() {
+	
+				this.Pin.Ring.generateStencil();
+				this.Pin.Circle.generateStencil();
+				this.Pin.Triangle.generateStencil();
+			}
+		}, {
+			key: 'clearDots',
+			value: function clearDots() {
+	
+				this.Pin.ctx.clearRect(0, 0, this.Pin.size, this.Pin.size);
+			}
+		}]);
+	
+		return Dots;
+	})();
+	
+	module.exports = Dots;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Generate = (function () {
+		function Generate(Pin, Dots) {
+			_classCallCheck(this, Generate);
+	
+			console.log('new Generate instance');
+	
+			this.Pin = Pin;
+			this.Dots = Dots;
+			this.steps = 100;
+	
+			this.displacement = this.generateDisplacement();
+			this.Dots.instances = this.generateInstances();
+			this.Dots.renderDots();
+		}
+	
+		_createClass(Generate, [{
+			key: 'generateInstances',
+			value: function generateInstances() {
+	
+				var instances = [];
+	
+				for (var i = 0; i < this.Dots.total; i += 1) {
+	
+					var coordinates = this.locateDot();
+					var reference = this.setAngle();
+					var speed = this.setSpeed();
+					var steps = this.setSteps();
+					var color = this.setColor();
+	
+					instances[i] = {
+						x: 7, //  this.Pin.Helper.round(coordinates.x),
+						y: 7, //  this.Pin.Helper.round(coordinates.y),
+						reference: reference,
+						speed: speed,
+						steps: steps,
+						color: color
+					};
+				}
+	
+				console.log('log instances!');
+				console.log(instances);
+	
+				return instances;
+			}
+		}, {
+			key: 'generateDisplacement',
+			value: function generateDisplacement() {
+	
+				var max = this.Pin.center - this.Dots.radius;
+				var increment = Math.pow(max, 1 / (this.steps - 1));
+				var displacement = [0, increment];
+	
+				for (var i = 2; i < this.steps; i += 1) {
+	
+					displacement[i] = displacement[i - 1] * increment;
+				}
+	
+				return displacement;
+			}
+		}, {
+			key: 'locateDot',
+			value: function locateDot() {
+	
+				// displacement = - / + ?
+				// random x value
+				// x = - / + ?
+				// find y with displacement and x
+				// y = - / + ?
+	
+				var displacement = this.setDisplacement();
+				var x = this.setXaxis(displacement);
+				var y = this.setYaxis(x, displacement);
+				var coordinates = this.setOrientation(x, y);
+	
+				return coordinates;
+			}
+		}, {
+			key: 'setDisplacement',
+			value: function setDisplacement() {
+	
+				var i = this.Pin.Helper.randomise({ max: this.steps - 1 });
+				var displacement = this.displacement[i];
+	
+				return displacement;
+			}
+		}, {
+			key: 'setXaxis',
+			value: function setXaxis(displacement) {
+	
+				var x = this.Pin.Helper.randomise({ max: Math.floor(displacement) });
+	
+				return x;
+			}
+		}, {
+			key: 'setYaxis',
+			value: function setYaxis(x, displacement) {
+	
+				var y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
+	
+				return y;
+			}
+		}, {
+			key: 'setOrientation',
+			value: function setOrientation() {
+				for (var _len = arguments.length, coordinates = Array(_len), _key = 0; _key < _len; _key++) {
+					coordinates[_key] = arguments[_key];
+				}
+	
+				for (var i = 0; i < coordinates.length; i += 1) {
+	
+					var center = this.Pin.center;
+	
+					coordinates[i] = this.Pin.Helper.boolean() ? center += coordinates[i] : center -= coordinates[i];
+				}
+	
+				return {
+					x: coordinates[0],
+					y: coordinates[1]
+				};
+			}
+		}, {
+			key: 'setAngle',
+			value: function setAngle() {
+	
+				var angle = this.Pin.Helper.randomise({ max: 359 });
+	
+				return angle;
+			}
+		}, {
+			key: 'setSpeed',
+			value: function setSpeed() {
+	
+				return this.Pin.Helper.randomise({ min: 1, max: 3 });
+			}
+		}, {
+			key: 'setSteps',
+			value: function setSteps() {
+	
+				return this.Pin.Helper.randomise({ min: 20, max: 60 });
+			}
+		}, {
+			key: 'setColor',
+			value: function setColor() {
+	
+				var tone = this.Pin.Helper.boolean() ? 'light' : 'dark';
+	
+				return this.Dots.color[tone];
+			}
+		}]);
+	
+		return Generate;
+	})();
+	
+	module.exports = Generate;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Movement = (function () {
+		function Movement(Pin, Dots) {
+			_classCallCheck(this, Movement);
+	
+			console.log('new Movement instance');
+	
+			this.Pin = Pin;
+			this.Dots = Dots;
+			this.angles = this.generateAngles();
+		}
+	
+		_createClass(Movement, [{
+			key: 'generateAngles',
+			value: function generateAngles() {
+	
+				var angles = [];
+	
+				for (var i = 0; i < 90; i += 1) {
+	
+					var offset = this.calculateOffset(i);
+	
+					angles = this.reflectQuadrants(i, angles, offset.x, offset.y);
+				}
+	
+				return angles;
+			}
+		}, {
+			key: 'convertToRadians',
+			value: function convertToRadians(degrees) {
+	
+				// radians : degrees = 1 : 57.2958
+				var ratio = 57.2958;
+	
+				return degrees / ratio;
+			}
+		}, {
+			key: 'reflectQuadrants',
+			value: function reflectQuadrants(i, angles, x, y) {
+	
+				angles[i + 90 * 0] = { x: x, y: y };
+				angles[i + 90 * 1] = { x: x, y: y * -1 };
+				angles[i + 90 * 2] = { x: x * -1, y: y * -1 };
+				angles[i + 90 * 3] = { x: x * -1, y: y };
+	
+				return angles;
+			}
+		}, {
+			key: 'calculateOffset',
+			value: function calculateOffset(i) {
+	
+				var displacement = 1;
+				var degrees = this.convertToRadians(i);
+				var x = Math.sin(degrees) * displacement;
+				var y = Math.cos(degrees) * displacement;
+	
+				return {
+					x: this.Pin.Helper.round(x),
+					y: this.Pin.Helper.round(y)
+				};
+			}
+	
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+	
+		}, {
+			key: 'updateDotProperties',
+			value: function updateDotProperties() {
+	
+				// https://jsbin.com/suvebotoxi/edit?js,console
+				// https://jsbin.com/rivojuyixe/edit?js,console
+	
+				var instances = this.Dots.instances;
+	
+				for (var i = 0; i < this.Dots.total; i += 1) {
+	
+					var instance = instances[i];
+	
+					instance.steps = this.updateSteps(instance);
+					instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+					var coordinates = this.updateTrajectory(instance);
+	
+					instances[i] = {
+						x: coordinates.x,
+						y: coordinates.y,
+						reference: instance.reference,
+						speed: instance.speed,
+						steps: instance.steps.value,
+						color: instance.color
+					};
+				}
+	
+				this.Dots.instances = instances;
+			}
+		}, {
+			key: 'updateSteps',
+			value: function updateSteps(instance) {
+	
+				var value = instance.steps -= 1;
+				var reset = value <= 0;
+				value = reset ? this.Dots.Generate.setSteps() : value;
+	
+				return { value: value, reset: reset };
+			}
+		}, {
+			key: 'updateAngle',
+			value: function updateAngle(instance) {
+	
+				var i = this.Pin.Helper.randomise({ min: 10, max: 45 });
+				var reference = this.Pin.Helper.boolean() ? instance.reference -= i : instance.reference += i;
+	
+				if (reference >= 360) {
+	
+					reference = reference - 360;
+				} else if (reference < 0) {
+	
+					reference = 360 - reference * -1;
+				}
+	
+				return reference;
+			}
+		}, {
+			key: 'updateTrajectory',
+			value: function updateTrajectory(instance) {
+	
+				var i = instance.reference;
+				var angle = this.angles[i];
+				var x = angle.x < 0 ? instance.x -= angle.x * instance.speed * -1 : instance.x += angle.x * instance.speed;
+				var y = angle.y < 0 ? instance.y -= angle.y * instance.speed * -1 : instance.y += angle.y * instance.speed;
+	
+				// console.log(`instance.x = ${instance.x} vs angle.x = ${angle.x} | instance.y = ${instance.y} vs angle.y = ${angle.y}`);
+				// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
+	
+				return { x: x, y: y };
+			}
+		}, {
+			key: 'getNewCoordinates',
+			value: function getNewCoordinates(instance) {
+	
+				var increment = 1;
+				var x = undefined;
+				var y = undefined;
+				var hypotenuse = undefined;
+	
+				// do {
+	
+				// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
+				// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
+				// hypotenuse = this.calculateHypotenuse(x, y);
+	
+				// } while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
+				//    !this.Pin.Circle.testRelevance(hypotenuse) &&
+				//    !this.Pin.Triangle.testRelevance(x, y));
+	
+				return { x: x, y: y };
+			}
+		}, {
+			key: 'calculateHypotenuse',
+			value: function calculateHypotenuse(x, y) {
+	
+				var center = this.Pin.center;
+				var width = x > center ? x - center : center - x;
+				var height = y > center ? y - center : center - y;
+	
+				return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+			}
+		}]);
+	
+		return Movement;
+	})();
+	
+	module.exports = Movement;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Ring = (function () {
+		function Ring(Pin) {
+			_classCallCheck(this, Ring);
+	
+			console.log('new Ring instance');
+	
+			this.Pin = Pin;
+	
+			this.restingOuter = 150;
+			this.restingInner = 104;
+	
+			this.currentOuter = this.Pin.center;
+			this.currentInner = 0;
+		}
+	
+		_createClass(Ring, [{
+			key: 'generateStencil',
+			value: function generateStencil() {
+	
+				var ctx = this.Pin.ctx;
+				var center = this.Pin.center;
+				var radii = [this.currentOuter, this.currentInner];
+	
+				for (var i = 0; i < radii.length; i += 1) {
+	
+					ctx.beginPath();
+					ctx.arc(center, center, radii[i], 0, Math.PI * 2, true);
+					ctx.strokeStyle = 'black';
+					ctx.stroke();
+				}
+			}
+		}, {
+			key: 'updateDimensions',
+			value: function updateDimensions() {
+	
+				if (this.currentOuter > this.restingOuter) {
+	
+					this.currentOuter -= 1;
+				}
+	
+				if (this.currentInner < this.restingInner) {
+	
+					this.currentInner += 0.25;
+				}
+			}
+		}, {
+			key: 'testRelevance',
+			value: function testRelevance(hypotenuse) {
+	
+				return hypotenuse < this.currentOuter && hypotenuse > this.currentInner ? true : false;
+			}
+		}]);
+	
+		return Ring;
+	})();
+	
+	module.exports = Ring;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Circle = (function () {
+		function Circle(Pin) {
+			_classCallCheck(this, Circle);
+	
+			console.log('new Circle instance');
+	
+			this.Pin = Pin;
+	
+			this.restingRadius = 36;
+			this.currentRadius = 10;
+		}
+	
+		_createClass(Circle, [{
+			key: 'generateStencil',
+			value: function generateStencil() {
+	
+				var ctx = this.Pin.ctx;
+				var center = this.Pin.center;
+	
+				ctx.beginPath();
+				ctx.arc(center, center, this.currentRadius, 0, Math.PI * 2, true);
+				ctx.strokeStyle = 'black';
+				ctx.stroke();
+			}
+		}, {
+			key: 'updateDimensions',
+			value: function updateDimensions() {
+	
+				if (this.currentRadius < this.restingRadius) {
+	
+					this.currentRadius += 0.05;
+				}
+			}
+		}, {
+			key: 'testRelevance',
+			value: function testRelevance(hypotenuse) {
+	
+				return hypotenuse < this.currentRadius ? true : false;
+			}
+		}]);
+	
+		return Circle;
+	})();
+	
+	module.exports = Circle;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Triangle = (function () {
+		function Triangle(Pin) {
+			_classCallCheck(this, Triangle);
+	
+			console.log('new Triangle instance');
+	
+			this.Pin = Pin;
+			this.size = 84;
+			this.x = this.Pin.center - this.size / 2;
+			this.y = this.Pin.center + 130;
+			this.ratio = this.calculateRatio();
+			this.height = this.size / 2 * this.ratio + this.y;
+		}
+	
+		_createClass(Triangle, [{
+			key: 'calculateRatio',
+			value: function calculateRatio() {
+	
+				// Find the ratio of an equilateral triangles incline in respect to its
+				// width and height properties.
+				//
+				// This will help us in generating the stencil area but more importantly
+				// we can test if a dot resides within the triangle by using the ratio
+				// as a maximum value i.e if the incline ratio of a dot is > base ratio
+				// it is outside the triangle area.
+				//
+				// We do this by cutting the equilateral triangle in half to create an
+				// easy to manage right angle triangle. From there we use the known
+				// values (width and hypotenuse) to generate the height of the triangle.
+				// Now we know all 3 side measurements we can create a ratio between the
+				// width and the height.
+	
+				var width = 10 / 2;
+				var hypotenuse = 10;
+				var height = Math.sqrt(Math.pow(hypotenuse, 2) - Math.pow(width, 2));
+	
+				return height / width;
+	
+				// \-------/
+				// 	\  |  /
+				// 	 \ | /
+				// 	  \|/
+			}
+		}, {
+			key: 'generateStencil',
+			value: function generateStencil() {
+	
+				var ctx = this.Pin.ctx;
+	
+				ctx.beginPath();
+				ctx.moveTo(this.x, this.y);
+				ctx.lineTo(this.x + this.size, this.y);
+				ctx.lineTo(this.Pin.center, this.size / 2 * this.ratio + this.y);
+				ctx.lineTo(this.x, this.y);
+				ctx.strokeStyle = 'black';
+				ctx.stroke();
+			}
+		}, {
+			key: 'testRelevance',
+			value: function testRelevance(x, y) {
+	
+				// We need to find if the current dot instance resides within the
+				// triangle area. First we test if the square that surrounds the
+				// triangle has any relevance and if so we move onto calculating the
+				// dots relationship to the triangles actual dimensions.
+				//
+				// We once again cut the equilateral triangle in half to create an easy
+				// to manage right angle triangle. We want to make a right angle
+				// triangle out of the current x and y coordinates and reference it
+				// against the slope of the actual triangle shape (a larger slope ===
+				// outside the triangle area).
+				//
+				// To create the test we set the triangle to be in either the top left
+				// or top right corner of the icon triangle (depending on which is
+				// closer i.e. which side of the centre line the dot resides). Using
+				// this corner point and the dots location we can drive a width, height
+				// and starting point for the reference triangle.
+				//
+				// From there we use the equilateral ratio to test if the reference
+				// triangle height is > or < an equilateral height.
+	
+				var center = this.Pin.center,
+				    offset = this.size / 2;
+	
+				if (x < center - offset || x > center + offset || y < this.y || y > this.height) {
+					return false;
+				}
+	
+				// console.log(`Inside square -> x = ${x} vs (${center - offset} || ${center + offset} = ${x < center - offset && x > center + offset}) -> y = ${y} vs (${this.y} && ${this.height} ${y > this.y && y < this.height})`);
+	
+				var width = x > center ? center + offset - x : x - (center - offset),
+				    height = y - this.y;
+	
+				// console.log(`width: ${width} (${center + offset} - ${x}) | height: ${height} (${y} - ${this.y})`);
+	
+				return width * this.ratio > height ? true : false;
+			}
+		}]);
+	
+		return Triangle;
+	})();
+	
+	module.exports = Triangle;
 
 /***/ }
 /******/ ]);

@@ -11,12 +11,12 @@ const Generate = class {
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
-		this.Dots.instances = this.generateCoordinates();
+		this.Dots.instances = this.generateInstances();
 		this.Dots.renderDots();
 
 	}
 
-	generateCoordinates() {
+	generateInstances() {
 
 		const instances = [];
 
@@ -28,11 +28,9 @@ const Generate = class {
 			const steps = this.setSteps();
 			const color = this.setColor();
 
-			console.log(speed);
-
 			instances[i] = {
-				x: coordinates.x,
-				y: coordinates.y,
+				x: this.Pin.Helper.round(coordinates.x),
+				y: this.Pin.Helper.round(coordinates.y),
 				reference,
 				speed,
 				steps,
@@ -40,8 +38,6 @@ const Generate = class {
 			};
 
 		}
-
-		console.log(instances);
 
 		return instances;
 
@@ -55,7 +51,7 @@ const Generate = class {
 
 		for (let i = 2; i < this.steps; i += 1) {
 
-			displacement[i] = displacement[i - 1] * increment;
+			displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
 
 		}
 

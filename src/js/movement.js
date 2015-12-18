@@ -9,6 +9,7 @@ const Movement = class {
 		this.Pin = Pin;
 		this.Dots = Dots;
 		this.angles = this.generateAngles();
+		console.log(this.angles);
 
 	}
 
@@ -55,9 +56,20 @@ const Movement = class {
 		const x = Math.sin(degrees) * displacement;
 		const y = Math.cos(degrees) * displacement;
 
-		return {x, y};
+		return {
+			x: this.Pin.Helper.round(x),
+			y: this.Pin.Helper.round(y)
+		};
 
 	}
+
+	//
+	//
+	//
+	//
+	//
+	//
+	//
 
 	updateDotProperties() {
 
@@ -75,8 +87,8 @@ const Movement = class {
 			const coordinates = this.updateTrajectory(instance);
 
 			instances[i] = {
-				x: coordinates.x,
-				y: coordinates.y,
+				x: this.Pin.Helper.round(coordinates.x),
+				y: this.Pin.Helper.round(coordinates.y),
 				reference: instance.reference,
 				speed: instance.speed,
 				steps: instance.steps.value,
@@ -120,10 +132,7 @@ const Movement = class {
 
 	updateTrajectory(instance) {
 
-		// console.log(instance);
-
 		const i = instance.reference;
-		// console.log(i);
 		const angle = this.angles[i];
 		const x = angle.x < 0 ? instance.x -= (angle.x * instance.speed * -1) : instance.x += (angle.x * instance.speed);
 		const y = angle.y < 0 ? instance.y -= (angle.y * instance.speed * -1) : instance.y += (angle.y * instance.speed);

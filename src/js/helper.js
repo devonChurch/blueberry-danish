@@ -24,7 +24,7 @@ const Helper = class {
 
 	round(value) {
 
-		// Round value to 1 decimal place
+		// Round value to 1 Decimal place
 		return Math.round(value * 10) / 10;
 
 	}

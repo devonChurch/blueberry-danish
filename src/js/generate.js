@@ -37,7 +37,7 @@ const Generate = class {
 				color
 			};
 
-			console.log(instances[i]);
+			// console.log(instances[i]);
 
 		}
 
@@ -47,13 +47,28 @@ const Generate = class {
 
 	generateDisplacement() {
 
-		const max = this.Pin.center - this.Dots.radius;
+		const offset = 200;
+		const max = this.Pin.center - this.Dots.radius - offset;
 		const increment = Math.pow(max, 1 / (this.steps - 1));
 		let displacement = [0, increment];
 
 		for (let i = 2; i < this.steps; i += 1) {
 
-			displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
+			// displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
+			displacement[i] = (displacement[i - 1] * increment); //  + offset;
+
+		}
+
+		// console.log(displacement);
+		return this.displacementOffset(displacement, offset);
+
+	}
+
+	displacementOffset(displacement, offset) {
+
+		for (let i = 0; i < this.steps; i += 1) {
+
+			displacement[i] += Math.floor(offset);
 
 		}
 

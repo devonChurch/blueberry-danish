@@ -193,9 +193,9 @@ const Movement = class {
 
 			i += 1;
 
-			if (i > 1) {
-				console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
-			}
+			// if (i > 1) {
+			// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
+			// }
 
 			// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
 			// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;

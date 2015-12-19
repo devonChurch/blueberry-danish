@@ -33,9 +33,11 @@ const Generate = class {
 				y: this.Pin.Helper.round(coordinates.y),
 				reference,
 				speed,
-				steps,
+				steps: steps,
 				color
 			};
+
+			console.log(instances[i]);
 
 		}
 
@@ -128,13 +130,13 @@ const Generate = class {
 
 	setSpeed() {
 
-		return this.Pin.Helper.randomise({min: 2, max: 4});
+		return 1.5; // this.Pin.Helper.randomise({min: 2, max: 4});
 
 	}
 
 	setSteps() {
 
-		return this.Pin.Helper.randomise({min: 20, max: 60});
+		return this.Pin.Helper.randomise({min: 10, max: 40});
 
 	}
 

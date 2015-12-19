@@ -80,21 +80,25 @@ const Movement = class {
 		for (let i = 0; i < this.Dots.total; i += 1) {
 
 			const instance = instances[i];
-			const properties = this.scrutiniseRelevance(instance);
+			let updates = this.scrutiniseRelevance(instance);
+
+			// console.log(updates);
+
 
 			// if the relevance needed to be rectified then force steps update!
-			// instance.steps = this.updateSteps(instance);
+			updates.steps = this.updateSteps(instance.steps, updates.redirect);
+			updates.reference = updates.redirect || updates.steps.reset ? this.updateAngle(instance.reference, updates.redirect) : instance.reference;
 
 			// instance.steps = this.updateSteps(instance);
 			// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
 			// const coordinates = this.updateTrajectory(instance);
 
 			instances[i] = {
-				x: this.Pin.Helper.round(properties.x),
-				y: this.Pin.Helper.round(properties.y),
-				reference: properties.reference,
+				x: this.Pin.Helper.round(updates.x),
+				y: this.Pin.Helper.round(updates.y),
+				reference: updates.reference,
 				speed: instance.speed,
-				steps: instance.steps, // instance.steps.value,
+				steps: updates.steps.value,
 				color: instance.color
 			};
 
@@ -104,28 +108,35 @@ const Movement = class {
 
 	}
 
-	updateSteps(instance) {
+	updateSteps(value, redirect) {
 
-		let value = instance.steps -= 1;
-		let reset = value <= 0;
-		value = reset ? this.Dots.Generate.setSteps() : value;
+		// console.log(`before ${steps}`);
+		value -= 1;
+		const reset = value < 0;
+		value = reset || redirect ? this.Dots.Generate.setSteps() : value;
 
-		return {value, reset};
+		// console.log(`after ${steps}, ${reset}`);
+		return {
+			value,
+			reset
+		};
 
 	}
 
-	updateAngle({reference, relevance = true}) {
+	updateAngle(reference, redirect) {
 
-		const min = relevance ? 10 : 30;
-		const max = relevance ? 45 : 45;
+		// console.log(`BEFORE updating angle -> ref = ${reference}, redirect ${redirect}`);
+
+		const min = redirect ? 30 : 10;
+		const max = redirect ? 45 : 25;
 		const i = this.Pin.Helper.randomise({min, max});
-		reference = this.Pin.Helper.boolean() && relevance ? reference -= i : reference += i;
+		reference = this.Pin.Helper.boolean() || redirect ? reference -= i : reference += i;
 
-		// if (!relevance) {
-		//
-		// 	console.log(`hit wall! change to ${i} = ${reference}`);
-		//
-		// }
+		if (redirect) {
+
+			// console.log(`hit wall! change to ${i} = ${reference}`);
+
+		}
 
 		if (reference >= 360) {
 
@@ -137,17 +148,20 @@ const Movement = class {
 
 		}
 
+		// console.log(`AFTER updating angle -> ref = ${reference}, redirect ${redirect}`);
 		return reference;
 
 	}
 
 	updateTrajectory(i, reference, x, y, speed) {
 
+		// console.log(`i ${i} | reference ${reference} | x ${x}, y ${y}`);
+
 		const angle = this.angles[reference];
 		x = angle.x < 0 ? x -= (angle.x * speed * -1) : x += (angle.x * speed);
 		y = angle.y < 0 ? y -= (angle.y * speed * -1) : y += (angle.y * speed);
 
-		// console.log(`instance.x = ${instance.x} vs angle.x = ${angle.x} | instance.y = ${instance.y} vs angle.y = ${angle.y}`);
+		// console.log(`instance.x = ${x} vs angle.x = ${angle.x} | instance.y = ${y} vs angle.y = ${angle.y}`);
 		// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
 
 		return {x, y};
@@ -173,15 +187,15 @@ const Movement = class {
 
 		do {
 
-			reference = i === 0 ? reference : this.updateAngle({reference, relevance: false});
+			reference = i === 0 ? reference : this.updateAngle(reference, true);
 			coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
 			hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
 
 			i += 1;
 
-			// if (i > 0) {
-			// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
-			// }
+			if (i > 1) {
+				console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
+			}
 
 			// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
 			// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
@@ -200,6 +214,7 @@ const Movement = class {
 		return {
 			x: coordinates.x,
 			y: coordinates.y,
+			redirect: i > 1, // how many times did the trajectory get resolved
 			reference
 		};
 

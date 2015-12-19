@@ -9365,6 +9365,7 @@
 			key: 'round',
 			value: function round(value) {
 	
+				// Round value to 1 decimal place
 				return Math.round(value * 10) / 10;
 			}
 		}]);
@@ -9396,7 +9397,7 @@
 	
 			this.Pin = Pin;
 			this.radius = 5;
-			this.total = 500;
+			this.total = 1;
 			this.color = this.setColors();
 			this.instances = [];
 			this.Generate = new Generate(Pin, this);
@@ -9444,7 +9445,7 @@
 				this.renderDots();
 				// this.Pin.Ring.updateDimensions();
 				// this.Pin.Circle.updateDimensions();
-				// this.showDebugTemplate(); // For debug only
+				this.showDebugTemplate(); // For debug only
 	
 				requestAnimationFrame(function () {
 					return _this.moveDots();
@@ -9513,17 +9514,16 @@
 					var color = this.setColor();
 	
 					instances[i] = {
-						x: 7, //  this.Pin.Helper.round(coordinates.x),
-						y: 7, //  this.Pin.Helper.round(coordinates.y),
+						x: this.Pin.Helper.round(coordinates.x),
+						y: this.Pin.Helper.round(coordinates.y),
 						reference: reference,
 						speed: speed,
 						steps: steps,
 						color: color
 					};
-				}
 	
-				console.log('log instances!');
-				console.log(instances);
+					console.log(instances[i]);
+				}
 	
 				return instances;
 			}
@@ -9537,7 +9537,7 @@
 	
 				for (var i = 2; i < this.steps; i += 1) {
 	
-					displacement[i] = displacement[i - 1] * increment;
+					displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
 				}
 	
 				return displacement;
@@ -9615,13 +9615,13 @@
 			key: 'setSpeed',
 			value: function setSpeed() {
 	
-				return this.Pin.Helper.randomise({ min: 1, max: 3 });
+				return this.Pin.Helper.randomise({ min: 2, max: 4 });
 			}
 		}, {
 			key: 'setSteps',
 			value: function setSteps() {
 	
-				return this.Pin.Helper.randomise({ min: 20, max: 60 });
+				return this.Pin.Helper.randomise({ min: 20, max: 40 });
 			}
 		}, {
 			key: 'setColor',
@@ -9731,17 +9731,24 @@
 				for (var i = 0; i < this.Dots.total; i += 1) {
 	
 					var instance = instances[i];
+					var updates = this.scrutiniseRelevance(instance);
 	
-					instance.steps = this.updateSteps(instance);
-					instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-					var coordinates = this.updateTrajectory(instance);
+					console.log(updates);
+	
+					// if the relevance needed to be rectified then force steps update!
+					updates.steps = this.updateSteps(instance.steps, updates.redirect);
+					updates.reference = updates.redirect || updates.steps.reset ? this.updateAngle(instance.reference, updates.redirect) : instance.reference;
+	
+					// instance.steps = this.updateSteps(instance);
+					// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+					// const coordinates = this.updateTrajectory(instance);
 	
 					instances[i] = {
-						x: coordinates.x,
-						y: coordinates.y,
-						reference: instance.reference,
+						x: this.Pin.Helper.round(updates.x),
+						y: this.Pin.Helper.round(updates.y),
+						reference: updates.reference,
 						speed: instance.speed,
-						steps: instance.steps.value,
+						steps: updates.steps.value,
 						color: instance.color
 					};
 				}
@@ -9750,20 +9757,34 @@
 			}
 		}, {
 			key: 'updateSteps',
-			value: function updateSteps(instance) {
+			value: function updateSteps(value, redirect) {
 	
-				var value = instance.steps -= 1;
-				var reset = value <= 0;
-				value = reset ? this.Dots.Generate.setSteps() : value;
+				// console.log(`before ${steps}`);
+				value -= 1;
+				var reset = value < 0;
+				value = reset || redirect ? this.Dots.Generate.setSteps() : value;
 	
-				return { value: value, reset: reset };
+				// console.log(`after ${steps}, ${reset}`);
+				return {
+					value: value,
+					reset: reset
+				};
 			}
 		}, {
 			key: 'updateAngle',
-			value: function updateAngle(instance) {
+			value: function updateAngle(reference, redirect) {
 	
-				var i = this.Pin.Helper.randomise({ min: 10, max: 45 });
-				var reference = this.Pin.Helper.boolean() ? instance.reference -= i : instance.reference += i;
+				// console.log(`BEFORE updating angle -> ref = ${reference}, redirect ${redirect}`);
+	
+				var min = redirect ? 30 : 10;
+				var max = redirect ? 45 : 25;
+				var i = this.Pin.Helper.randomise({ min: min, max: max });
+				reference = this.Pin.Helper.boolean() || redirect ? reference -= i : reference += i;
+	
+				if (redirect) {
+	
+					console.log('hit wall! change to ' + i + ' = ' + reference);
+				}
 	
 				if (reference >= 360) {
 	
@@ -9773,42 +9794,70 @@
 					reference = 360 - reference * -1;
 				}
 	
+				// console.log(`AFTER updating angle -> ref = ${reference}, redirect ${redirect}`);
 				return reference;
 			}
 		}, {
 			key: 'updateTrajectory',
-			value: function updateTrajectory(instance) {
+			value: function updateTrajectory(i, reference, x, y, speed) {
 	
-				var i = instance.reference;
-				var angle = this.angles[i];
-				var x = angle.x < 0 ? instance.x -= angle.x * instance.speed * -1 : instance.x += angle.x * instance.speed;
-				var y = angle.y < 0 ? instance.y -= angle.y * instance.speed * -1 : instance.y += angle.y * instance.speed;
+				// console.log(`i ${i} | reference ${reference} | x ${x}, y ${y}`);
 	
-				// console.log(`instance.x = ${instance.x} vs angle.x = ${angle.x} | instance.y = ${instance.y} vs angle.y = ${angle.y}`);
+				var angle = this.angles[reference];
+				x = angle.x < 0 ? x -= angle.x * speed * -1 : x += angle.x * speed;
+				y = angle.y < 0 ? y -= angle.y * speed * -1 : y += angle.y * speed;
+	
+				// console.log(`instance.x = ${x} vs angle.x = ${angle.x} | instance.y = ${y} vs angle.y = ${angle.y}`);
 				// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
 	
 				return { x: x, y: y };
 			}
 		}, {
-			key: 'getNewCoordinates',
-			value: function getNewCoordinates(instance) {
+			key: 'scrutiniseRelevance',
+			value: function scrutiniseRelevance(instance) {
 	
-				var increment = 1;
-				var x = undefined;
-				var y = undefined;
+				var reference = instance.reference;
+				var coordinates = undefined;
 				var hypotenuse = undefined;
+				var i = 0;
 	
-				// do {
+				// update current trajectory
+				// test relevance
+				// if NOT relevant than pick another angle
 	
-				// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
-				// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
-				// hypotenuse = this.calculateHypotenuse(x, y);
+				// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+				// const coordinates = this.updateTrajectory(instance);
 	
-				// } while(!this.Pin.Ring.testRelevance(hypotenuse)  &&
-				//    !this.Pin.Circle.testRelevance(hypotenuse) &&
-				//    !this.Pin.Triangle.testRelevance(x, y));
+				// instance.steps = this.updateSteps(instance);
 	
-				return { x: x, y: y };
+				do {
+	
+					reference = i === 0 ? reference : this.updateAngle(reference, true);
+					coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
+					hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
+	
+					i += 1;
+	
+					// if (i > 0) {
+					// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
+					// }
+	
+					// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
+					// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
+					// hypotenuse = this.calculateHypotenuse(x, y);
+	
+					// } while(!this.Pin.Ring.testRelevance(hypotenuse));
+	
+					// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
+					// 		!this.Pin.Circle.testRelevance(hypotenuse));
+				} while (!this.Pin.Ring.testRelevance(hypotenuse) && !this.Pin.Circle.testRelevance(hypotenuse) && !this.Pin.Triangle.testRelevance(coordinates.x, coordinates.y));
+	
+				return {
+					x: coordinates.x,
+					y: coordinates.y,
+					redirect: i > 2, // how many times did the trajectory get resolved
+					reference: reference
+				};
 			}
 		}, {
 			key: 'calculateHypotenuse',
@@ -9851,7 +9900,7 @@
 			this.restingInner = 104;
 	
 			this.currentOuter = this.Pin.center;
-			this.currentInner = 0;
+			this.currentInner = 32;
 		}
 	
 		_createClass(Ring, [{
@@ -9918,7 +9967,7 @@
 			this.Pin = Pin;
 	
 			this.restingRadius = 36;
-			this.currentRadius = 10;
+			this.currentRadius = this.Pin.Ring.currentInner + 5; // Slight overlap with rings inner radius
 		}
 	
 		_createClass(Circle, [{
@@ -9937,9 +9986,9 @@
 			key: 'updateDimensions',
 			value: function updateDimensions() {
 	
-				if (this.currentRadius < this.restingRadius) {
+				if (this.currentRadius > this.restingRadius) {
 	
-					this.currentRadius += 0.05;
+					this.currentRadius -= 2;
 				}
 			}
 		}, {

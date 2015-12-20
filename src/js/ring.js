@@ -39,8 +39,6 @@ const Ring = class {
 
 	updateOuterRing() {
 
-		console.log('updating OUTER ring');
-
 		this.currentOuter -= 1;
 		this.relevanceOuter = this.restingOuter < this.currentOuter;
 
@@ -48,30 +46,10 @@ const Ring = class {
 
 	updateInnerRing() {
 
-		console.log('updating INNER ring');
-
 		this.currentInner += 0.25;
 		this.relevanceInner = this.restingInner > this.currentInner;
 
 	}
-
-	// updateDimensions() {
-	//
-	// 	if (this.currentOuter > this.restingOuter) {
-	//
-	// 		this.currentOuter -= 1;
-	//
-	// 	} else {
-	//
-	// 		if (this.currentInner < this.restingInner) {
-	//
-	// 			this.currentInner += 0.25;
-	//
-	// 		}
-	//
-	// 	}
-	//
-	// }
 
 	testRelevance(hypotenuse) {
 

@@ -11,7 +11,8 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            { from:  '../index.html', to: 'index.html' }
+            { from:  '../index.html', to: 'index.html' },
+            { from:  '../img', to: 'img' }
         ]),
         new ExtractTextPlugin('style.css')
     ],

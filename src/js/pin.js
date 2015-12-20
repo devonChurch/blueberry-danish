@@ -1,7 +1,8 @@
 const $ = require('jquery');
 const Helper = require('./helper');
-const Dots = require('./dots');
 const Shape = require('./shape');
+const Dots = require('./dots');
+const Heading = require('./heading');
 
 const Pin = class {
 
@@ -9,6 +10,7 @@ const Pin = class {
 
 		console.log('new Pin instance');
 
+		this.$logo = $('#logo');
 		this.size = 1000;
 		this.center = this.size / 2;
 		this.ctx = this.generateCanvas();
@@ -16,14 +18,15 @@ const Pin = class {
 		this.Helper = new Helper(this);
 		this.Shape = new Shape(this);
 		this.Dots = new Dots(this);
+		this.Heading = new Heading(this);
 
 	}
 
 	generateCanvas() {
 
-		const $canvas = $(`<canvas class="location-pin" width="${this.size}" height="${this.size}" />`);
+		const $canvas = $(`<canvas class="pin" width="${this.size}" height="${this.size}" />`);
 
-		$('body').append($canvas);
+		this.$logo.append($canvas);
 
 		return $canvas[0].getContext('2d');
 

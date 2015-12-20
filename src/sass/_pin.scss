@@ -1,0 +1,69 @@
+.logo {
+    $size: 1000px;
+    background: black;
+    border-radius: 50%;
+    height: $size;
+    overflow: hidden;
+    width: $size;
+
+    &,
+    & > * {
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    & > * {
+        z-index: 1;
+    }
+
+    &:after {
+        $offset: -50px;
+        background: {
+            image: url('/img/xerocon-background.jpg');
+            position: center center;
+            repeat: no-repeat;
+            size: cover;
+        }
+        bottom: $offset;
+        content: '';
+        display: block;
+        left: $offset;
+        opacity: 0.5;
+        position: absolute;
+        right: $offset;
+        top: $offset;
+    }
+}
+
+.pin {
+    display: block;
+}
+
+$heading--offset: 240px;
+$heading--segment: 38px;
+$heading--location: 31px;
+
+.heading {
+    display: block;
+    height: $heading--segment;
+    width: auto;
+
+    &--dormant > path {
+        // position: relative;
+        // transition: translateY(-100px);
+        y: -100px;
+    }
+}
+
+.xerocon {
+    fill: white;
+    margin-top: $heading--offset;
+    width: auto;
+}
+
+.location {
+    fill: #13B5EA;
+    margin-top: $heading--offset + $heading--segment;
+}

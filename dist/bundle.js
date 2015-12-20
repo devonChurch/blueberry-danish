@@ -71,9 +71,7 @@
 	var $ = __webpack_require__(6);
 	var Helper = __webpack_require__(7);
 	var Dots = __webpack_require__(8);
-	var Ring = __webpack_require__(11);
-	var Circle = __webpack_require__(12);
-	var Triangle = __webpack_require__(13);
+	var Shape = __webpack_require__(11);
 	
 	var Pin = (function () {
 		function Pin() {
@@ -86,17 +84,15 @@
 			this.ctx = this.generateCanvas();
 	
 			this.Helper = new Helper(this);
-			this.Ring = new Ring(this);
-			this.Circle = new Circle(this);
-			this.Triangle = new Triangle(this);
-			this.Dots = new Dots(this); // new Generate(); // new Placement
+			this.Shape = new Shape(this);
+			this.Dots = new Dots(this);
 		}
 	
 		_createClass(Pin, [{
 			key: 'generateCanvas',
 			value: function generateCanvas() {
 	
-				var $canvas = $('<canvas class="location-pin" width="' + this.size + '" height="' + this.size + '" />');
+				var $canvas = $('<canvas class="pin" width="' + this.size + '" height="' + this.size + '" />');
 	
 				$('body').append($canvas);
 	
@@ -9365,7 +9361,7 @@
 			key: 'round',
 			value: function round(value) {
 	
-				// Round value to 1 decimal place
+				// Round value to 1 Decimal place
 				return Math.round(value * 10) / 10;
 			}
 		}]);
@@ -9397,7 +9393,7 @@
 	
 			this.Pin = Pin;
 			this.radius = 5;
-			this.total = 1;
+			this.total = 400;
 			this.color = this.setColors();
 			this.instances = [];
 			this.Generate = new Generate(Pin, this);
@@ -9443,21 +9439,12 @@
 				this.Movement.updateDotProperties();
 				this.clearDots();
 				this.renderDots();
-				// this.Pin.Ring.updateDimensions();
-				// this.Pin.Circle.updateDimensions();
-				this.showDebugTemplate(); // For debug only
+				this.Pin.Shape.updateDimensions();
+				// this.Pin.Shape.showDebugTemplate(); // For debug only
 	
 				requestAnimationFrame(function () {
 					return _this.moveDots();
 				});
-			}
-		}, {
-			key: 'showDebugTemplate',
-			value: function showDebugTemplate() {
-	
-				this.Pin.Ring.generateStencil();
-				this.Pin.Circle.generateStencil();
-				this.Pin.Triangle.generateStencil();
 			}
 		}, {
 			key: 'clearDots',
@@ -9522,7 +9509,7 @@
 						color: color
 					};
 	
-					console.log(instances[i]);
+					// console.log(instances[i]);
 				}
 	
 				return instances;
@@ -9531,13 +9518,27 @@
 			key: 'generateDisplacement',
 			value: function generateDisplacement() {
 	
-				var max = this.Pin.center - this.Dots.radius;
+				var offset = 200;
+				var max = this.Pin.center - this.Dots.radius - offset;
 				var increment = Math.pow(max, 1 / (this.steps - 1));
 				var displacement = [0, increment];
 	
 				for (var i = 2; i < this.steps; i += 1) {
 	
-					displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
+					// displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
+					displacement[i] = displacement[i - 1] * increment; //  + offset;
+				}
+	
+				// console.log(displacement);
+				return this.displacementOffset(displacement, offset);
+			}
+		}, {
+			key: 'displacementOffset',
+			value: function displacementOffset(displacement, offset) {
+	
+				for (var i = 0; i < this.steps; i += 1) {
+	
+					displacement[i] += Math.floor(offset);
 				}
 	
 				return displacement;
@@ -9615,13 +9616,13 @@
 			key: 'setSpeed',
 			value: function setSpeed() {
 	
-				return this.Pin.Helper.randomise({ min: 2, max: 4 });
+				return 1.5; // this.Pin.Helper.randomise({min: 2, max: 4});
 			}
 		}, {
 			key: 'setSteps',
 			value: function setSteps() {
 	
-				return this.Pin.Helper.randomise({ min: 20, max: 40 });
+				return this.Pin.Helper.randomise({ min: 10, max: 40 });
 			}
 		}, {
 			key: 'setColor',
@@ -9733,7 +9734,7 @@
 					var instance = instances[i];
 					var updates = this.scrutiniseRelevance(instance);
 	
-					console.log(updates);
+					// console.log(updates);
 	
 					// if the relevance needed to be rectified then force steps update!
 					updates.steps = this.updateSteps(instance.steps, updates.redirect);
@@ -9783,7 +9784,8 @@
 	
 				if (redirect) {
 	
-					console.log('hit wall! change to ' + i + ' = ' + reference);
+					// console.log(`hit wall! change to ${i} = ${reference}`);
+	
 				}
 	
 				if (reference >= 360) {
@@ -9838,24 +9840,20 @@
 	
 					i += 1;
 	
-					// if (i > 0) {
+					// if (i > 1) {
 					// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
 					// }
-	
-					// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
-					// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
-					// hypotenuse = this.calculateHypotenuse(x, y);
 	
 					// } while(!this.Pin.Ring.testRelevance(hypotenuse));
 	
 					// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
 					// 		!this.Pin.Circle.testRelevance(hypotenuse));
-				} while (!this.Pin.Ring.testRelevance(hypotenuse) && !this.Pin.Circle.testRelevance(hypotenuse) && !this.Pin.Triangle.testRelevance(coordinates.x, coordinates.y));
+				} while (!this.Pin.Shape.Ring.testRelevance(hypotenuse) && !this.Pin.Shape.Circle.testRelevance(hypotenuse) && !this.Pin.Shape.Triangle.testRelevance(coordinates.x, coordinates.y));
 	
 				return {
 					x: coordinates.x,
 					y: coordinates.y,
-					redirect: i > 2, // how many times did the trajectory get resolved
+					redirect: i > 1, // how many times did the trajectory get resolved
 					reference: reference
 				};
 			}
@@ -9887,20 +9885,109 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
 	var $ = __webpack_require__(6);
+	var Ring = __webpack_require__(12);
+	var Circle = __webpack_require__(13);
+	var Triangle = __webpack_require__(14);
+	
+	var Shape = (function () {
+		function Shape(Pin) {
+			_classCallCheck(this, Shape);
+	
+			console.log('new Shape instance');
+	
+			this.Pin = Pin;
+	
+			this.Ring = new Ring(Pin, this);
+			this.Circle = new Circle(Pin, this);
+			this.Triangle = new Triangle(Pin, this);
+	
+			this.pause = 60;
+		}
+	
+		// this.Pin.Ring.updateDimensions();
+		// this.Pin.Circle.updateDimensions();
+	
+		_createClass(Shape, [{
+			key: 'updateDimensions',
+			value: function updateDimensions() {
+	
+				// console.log('updating shape');
+	
+				// always outer ring
+				// when outer ring = resting | pause fo 1000ms
+				// expand outer ring (may need to also animate the circle too?)
+	
+				// const outerRing = !this.Ring.relevanceOuter || this.Ring.updateOuterRing();
+	
+				if (this.Ring.relevanceOuter) {
+					this.Ring.updateOuterRing();
+				}
+				if (!this.Ring.relevanceOuter) {
+					this.pause -= 1;
+				}
+				if (!this.Ring.relevanceOuter && this.pause < 0 && this.Ring.relevanceInner) {
+					this.Ring.updateInnerRing();
+				}
+				// console.log(outerRing);
+				// this.pause = outerRing ? this.pause : this.pause += 1;
+				// const innerRing = outerRing && this.pause > 1000 || this.Ring.updateInnerRing();
+	
+				// if (this.Ring.currentOuter > this.Ring.restingOuter) {
+				//
+				// 	this.currentOuter -= 1;
+				//
+				// } else if (this.pause && this.pause !== 0) {
+				//
+				//
+				// } else if (this.Ring.currentOuter === this.Ring.restingOuter && !this.pause) {
+				//
+				// 	this.pause = 1000;
+				//
+				// }
+			}
+		}, {
+			key: 'showDebugTemplate',
+			value: function showDebugTemplate() {
+	
+				this.Ring.generateStencil();
+				this.Circle.generateStencil();
+				this.Triangle.generateStencil();
+			}
+		}]);
+	
+		return Shape;
+	})();
+	
+	module.exports = Shape;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
 	
 	var Ring = (function () {
-		function Ring(Pin) {
+		function Ring(Pin, Shape) {
 			_classCallCheck(this, Ring);
 	
 			console.log('new Ring instance');
 	
 			this.Pin = Pin;
+			this.Shape = Shape;
 	
+			this.relevanceOuter = true;
 			this.restingOuter = 150;
-			this.restingInner = 104;
-	
 			this.currentOuter = this.Pin.center;
-			this.currentInner = 32;
+	
+			this.relevanceInner = true;
+			this.restingInner = 104;
+			this.currentInner = 25;
 		}
 	
 		_createClass(Ring, [{
@@ -9920,19 +10007,42 @@
 				}
 			}
 		}, {
-			key: 'updateDimensions',
-			value: function updateDimensions() {
+			key: 'updateOuterRing',
+			value: function updateOuterRing() {
 	
-				if (this.currentOuter > this.restingOuter) {
+				console.log('updating OUTER ring');
 	
-					this.currentOuter -= 1;
-				}
-	
-				if (this.currentInner < this.restingInner) {
-	
-					this.currentInner += 0.25;
-				}
+				this.currentOuter -= 1;
+				this.relevanceOuter = this.restingOuter < this.currentOuter;
 			}
+		}, {
+			key: 'updateInnerRing',
+			value: function updateInnerRing() {
+	
+				console.log('updating INNER ring');
+	
+				this.currentInner += 0.25;
+				this.relevanceInner = this.restingInner > this.currentInner;
+			}
+	
+			// updateDimensions() {
+			//
+			// 	if (this.currentOuter > this.restingOuter) {
+			//
+			// 		this.currentOuter -= 1;
+			//
+			// 	} else {
+			//
+			// 		if (this.currentInner < this.restingInner) {
+			//
+			// 			this.currentInner += 0.25;
+			//
+			// 		}
+			//
+			// 	}
+			//
+			// }
+	
 		}, {
 			key: 'testRelevance',
 			value: function testRelevance(hypotenuse) {
@@ -9947,7 +10057,7 @@
 	module.exports = Ring;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9959,15 +10069,16 @@
 	var $ = __webpack_require__(6);
 	
 	var Circle = (function () {
-		function Circle(Pin) {
+		function Circle(Pin, Shape) {
 			_classCallCheck(this, Circle);
 	
 			console.log('new Circle instance');
 	
 			this.Pin = Pin;
+			this.Shape = Shape;
 	
 			this.restingRadius = 36;
-			this.currentRadius = this.Pin.Ring.currentInner + 5; // Slight overlap with rings inner radius
+			this.currentRadius = this.Shape.Ring.currentInner + 5; // Slight overlap with rings inner radius
 		}
 	
 		_createClass(Circle, [{
@@ -10005,7 +10116,7 @@
 	module.exports = Circle;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10017,12 +10128,14 @@
 	var $ = __webpack_require__(6);
 	
 	var Triangle = (function () {
-		function Triangle(Pin) {
+		function Triangle(Pin, Shape) {
 			_classCallCheck(this, Triangle);
 	
 			console.log('new Triangle instance');
 	
 			this.Pin = Pin;
+			this.Shape = Shape;
+	
 			this.size = 84;
 			this.x = this.Pin.center - this.size / 2;
 			this.y = this.Pin.center + 130;

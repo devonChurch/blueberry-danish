@@ -12,6 +12,7 @@ const Generate = class {
 
 		this.displacement = this.generateDisplacement();
 		this.Dots.instances = this.generateInstances();
+		// create anomaly
 		this.Dots.renderDots();
 
 	}
@@ -54,12 +55,10 @@ const Generate = class {
 
 		for (let i = 2; i < this.steps; i += 1) {
 
-			// displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
-			displacement[i] = (displacement[i - 1] * increment); //  + offset;
+			displacement[i] = (displacement[i - 1] * increment);
 
 		}
 
-		// console.log(displacement);
 		return this.displacementOffset(displacement, offset);
 
 	}
@@ -145,7 +144,8 @@ const Generate = class {
 
 	setSpeed() {
 
-		return 1.5; // this.Pin.Helper.randomise({min: 2, max: 4});
+		const speed = (Math.random() * (2.5)) + 1.5;
+		return 1.5; // this.Pin.Helper.round();
 
 	}
 

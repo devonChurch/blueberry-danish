@@ -7,4 +7,14 @@
 body {
   margin: 0; }
 
+body {
+  background-image: url("/img/xerocon-background.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: auto 1000px; }
+
+.pin {
+  display: block;
+  margin: auto; }
+
 /*# sourceMappingURL=style.css.map*/

@@ -70,15 +70,15 @@
 	
 	var $ = __webpack_require__(6);
 	var Helper = __webpack_require__(7);
-	var Dots = __webpack_require__(8);
-	var Shape = __webpack_require__(11);
+	var Shape = __webpack_require__(8);
+	var Dots = __webpack_require__(12);
+	var Heading = __webpack_require__(15);
 	
 	var Pin = (function () {
 		function Pin() {
 			_classCallCheck(this, Pin);
 	
-			console.log('new Pin instance');
-	
+			this.$logo = $('#logo');
 			this.size = 1000;
 			this.center = this.size / 2;
 			this.ctx = this.generateCanvas();
@@ -86,6 +86,9 @@
 			this.Helper = new Helper(this);
 			this.Shape = new Shape(this);
 			this.Dots = new Dots(this);
+			this.Heading = new Heading(this);
+	
+			this.activateLogo();
 		}
 	
 		_createClass(Pin, [{
@@ -94,9 +97,15 @@
 	
 				var $canvas = $('<canvas class="pin" width="' + this.size + '" height="' + this.size + '" />');
 	
-				$('body').append($canvas);
+				this.$logo.append($canvas);
 	
 				return $canvas[0].getContext('2d');
+			}
+		}, {
+			key: 'activateLogo',
+			value: function activateLogo() {
+	
+				this.$logo.removeClass('logo--dormant');
 			}
 		}]);
 	
@@ -9337,8 +9346,6 @@
 		function Helper(Pin) {
 			_classCallCheck(this, Helper);
 	
-			console.log('new Helper instance');
-	
 			this.Pin = Pin;
 		}
 	
@@ -9382,518 +9389,13 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
 	var $ = __webpack_require__(6);
-	var Generate = __webpack_require__(9);
-	var Movement = __webpack_require__(10);
-	
-	var Dots = (function () {
-		function Dots(Pin) {
-			_classCallCheck(this, Dots);
-	
-			console.log('new Dots instance');
-	
-			this.Pin = Pin;
-			this.radius = 5;
-			this.total = 400;
-			this.color = this.setColors();
-			this.instances = [];
-			this.Generate = new Generate(Pin, this);
-			this.Movement = new Movement(Pin, this);
-	
-			this.moveDots();
-		}
-	
-		_createClass(Dots, [{
-			key: 'setColors',
-			value: function setColors() {
-	
-				return {
-					light: '#13B5EA',
-					dark: '#0D85AB'
-				};
-			}
-		}, {
-			key: 'renderDots',
-			value: function renderDots() {
-	
-				for (var i = 0; i < this.total; i += 1) {
-	
-					this.placeOnCanvas(this.instances[i]);
-				}
-			}
-		}, {
-			key: 'placeOnCanvas',
-			value: function placeOnCanvas(instance) {
-	
-				var ctx = this.Pin.ctx;
-	
-				ctx.beginPath();
-				ctx.arc(instance.x, instance.y, this.radius, 0, Math.PI * 2, true);
-				ctx.fillStyle = instance.color;
-				ctx.fill();
-			}
-		}, {
-			key: 'moveDots',
-			value: function moveDots() {
-				var _this = this;
-	
-				this.Movement.updateDotProperties();
-				this.clearDots();
-				this.renderDots();
-				this.Pin.Shape.updateDimensions();
-				// this.Pin.Shape.showDebugTemplate(); // For debug only
-	
-				requestAnimationFrame(function () {
-					return _this.moveDots();
-				});
-			}
-		}, {
-			key: 'clearDots',
-			value: function clearDots() {
-	
-				this.Pin.ctx.clearRect(0, 0, this.Pin.size, this.Pin.size);
-			}
-		}]);
-	
-		return Dots;
-	})();
-	
-	module.exports = Dots;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var $ = __webpack_require__(6);
-	
-	var Generate = (function () {
-		function Generate(Pin, Dots) {
-			_classCallCheck(this, Generate);
-	
-			console.log('new Generate instance');
-	
-			this.Pin = Pin;
-			this.Dots = Dots;
-			this.steps = 100;
-	
-			this.displacement = this.generateDisplacement();
-			this.Dots.instances = this.generateInstances();
-			this.Dots.renderDots();
-		}
-	
-		_createClass(Generate, [{
-			key: 'generateInstances',
-			value: function generateInstances() {
-	
-				var instances = [];
-	
-				for (var i = 0; i < this.Dots.total; i += 1) {
-	
-					var coordinates = this.locateDot();
-					var reference = this.setAngle();
-					var speed = this.setSpeed();
-					var steps = this.setSteps();
-					var color = this.setColor();
-	
-					instances[i] = {
-						x: this.Pin.Helper.round(coordinates.x),
-						y: this.Pin.Helper.round(coordinates.y),
-						reference: reference,
-						speed: speed,
-						steps: steps,
-						color: color
-					};
-	
-					// console.log(instances[i]);
-				}
-	
-				return instances;
-			}
-		}, {
-			key: 'generateDisplacement',
-			value: function generateDisplacement() {
-	
-				var offset = 200;
-				var max = this.Pin.center - this.Dots.radius - offset;
-				var increment = Math.pow(max, 1 / (this.steps - 1));
-				var displacement = [0, increment];
-	
-				for (var i = 2; i < this.steps; i += 1) {
-	
-					// displacement[i] = this.Pin.Helper.round(displacement[i - 1] * increment);
-					displacement[i] = displacement[i - 1] * increment; //  + offset;
-				}
-	
-				// console.log(displacement);
-				return this.displacementOffset(displacement, offset);
-			}
-		}, {
-			key: 'displacementOffset',
-			value: function displacementOffset(displacement, offset) {
-	
-				for (var i = 0; i < this.steps; i += 1) {
-	
-					displacement[i] += Math.floor(offset);
-				}
-	
-				return displacement;
-			}
-		}, {
-			key: 'locateDot',
-			value: function locateDot() {
-	
-				// displacement = - / + ?
-				// random x value
-				// x = - / + ?
-				// find y with displacement and x
-				// y = - / + ?
-	
-				var displacement = this.setDisplacement();
-				var x = this.setXaxis(displacement);
-				var y = this.setYaxis(x, displacement);
-				var coordinates = this.setOrientation(x, y);
-	
-				return coordinates;
-			}
-		}, {
-			key: 'setDisplacement',
-			value: function setDisplacement() {
-	
-				var i = this.Pin.Helper.randomise({ max: this.steps - 1 });
-				var displacement = this.displacement[i];
-	
-				return displacement;
-			}
-		}, {
-			key: 'setXaxis',
-			value: function setXaxis(displacement) {
-	
-				var x = this.Pin.Helper.randomise({ max: Math.floor(displacement) });
-	
-				return x;
-			}
-		}, {
-			key: 'setYaxis',
-			value: function setYaxis(x, displacement) {
-	
-				var y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
-	
-				return y;
-			}
-		}, {
-			key: 'setOrientation',
-			value: function setOrientation() {
-				for (var _len = arguments.length, coordinates = Array(_len), _key = 0; _key < _len; _key++) {
-					coordinates[_key] = arguments[_key];
-				}
-	
-				for (var i = 0; i < coordinates.length; i += 1) {
-	
-					var center = this.Pin.center;
-	
-					coordinates[i] = this.Pin.Helper.boolean() ? center += coordinates[i] : center -= coordinates[i];
-				}
-	
-				return {
-					x: coordinates[0],
-					y: coordinates[1]
-				};
-			}
-		}, {
-			key: 'setAngle',
-			value: function setAngle() {
-	
-				var angle = this.Pin.Helper.randomise({ max: 359 });
-	
-				return angle;
-			}
-		}, {
-			key: 'setSpeed',
-			value: function setSpeed() {
-	
-				return 1.5; // this.Pin.Helper.randomise({min: 2, max: 4});
-			}
-		}, {
-			key: 'setSteps',
-			value: function setSteps() {
-	
-				return this.Pin.Helper.randomise({ min: 10, max: 40 });
-			}
-		}, {
-			key: 'setColor',
-			value: function setColor() {
-	
-				var tone = this.Pin.Helper.boolean() ? 'light' : 'dark';
-	
-				return this.Dots.color[tone];
-			}
-		}]);
-	
-		return Generate;
-	})();
-	
-	module.exports = Generate;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var $ = __webpack_require__(6);
-	
-	var Movement = (function () {
-		function Movement(Pin, Dots) {
-			_classCallCheck(this, Movement);
-	
-			console.log('new Movement instance');
-	
-			this.Pin = Pin;
-			this.Dots = Dots;
-			this.angles = this.generateAngles();
-		}
-	
-		_createClass(Movement, [{
-			key: 'generateAngles',
-			value: function generateAngles() {
-	
-				var angles = [];
-	
-				for (var i = 0; i < 90; i += 1) {
-	
-					var offset = this.calculateOffset(i);
-	
-					angles = this.reflectQuadrants(i, angles, offset.x, offset.y);
-				}
-	
-				return angles;
-			}
-		}, {
-			key: 'convertToRadians',
-			value: function convertToRadians(degrees) {
-	
-				// radians : degrees = 1 : 57.2958
-				var ratio = 57.2958;
-	
-				return degrees / ratio;
-			}
-		}, {
-			key: 'reflectQuadrants',
-			value: function reflectQuadrants(i, angles, x, y) {
-	
-				angles[i + 90 * 0] = { x: x, y: y };
-				angles[i + 90 * 1] = { x: x, y: y * -1 };
-				angles[i + 90 * 2] = { x: x * -1, y: y * -1 };
-				angles[i + 90 * 3] = { x: x * -1, y: y };
-	
-				return angles;
-			}
-		}, {
-			key: 'calculateOffset',
-			value: function calculateOffset(i) {
-	
-				var displacement = 1;
-				var degrees = this.convertToRadians(i);
-				var x = Math.sin(degrees) * displacement;
-				var y = Math.cos(degrees) * displacement;
-	
-				return {
-					x: this.Pin.Helper.round(x),
-					y: this.Pin.Helper.round(y)
-				};
-			}
-	
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-	
-		}, {
-			key: 'updateDotProperties',
-			value: function updateDotProperties() {
-	
-				// https://jsbin.com/suvebotoxi/edit?js,console
-				// https://jsbin.com/rivojuyixe/edit?js,console
-	
-				var instances = this.Dots.instances;
-	
-				for (var i = 0; i < this.Dots.total; i += 1) {
-	
-					var instance = instances[i];
-					var updates = this.scrutiniseRelevance(instance);
-	
-					// console.log(updates);
-	
-					// if the relevance needed to be rectified then force steps update!
-					updates.steps = this.updateSteps(instance.steps, updates.redirect);
-					updates.reference = updates.redirect || updates.steps.reset ? this.updateAngle(instance.reference, updates.redirect) : instance.reference;
-	
-					// instance.steps = this.updateSteps(instance);
-					// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-					// const coordinates = this.updateTrajectory(instance);
-	
-					instances[i] = {
-						x: this.Pin.Helper.round(updates.x),
-						y: this.Pin.Helper.round(updates.y),
-						reference: updates.reference,
-						speed: instance.speed,
-						steps: updates.steps.value,
-						color: instance.color
-					};
-				}
-	
-				this.Dots.instances = instances;
-			}
-		}, {
-			key: 'updateSteps',
-			value: function updateSteps(value, redirect) {
-	
-				// console.log(`before ${steps}`);
-				value -= 1;
-				var reset = value < 0;
-				value = reset || redirect ? this.Dots.Generate.setSteps() : value;
-	
-				// console.log(`after ${steps}, ${reset}`);
-				return {
-					value: value,
-					reset: reset
-				};
-			}
-		}, {
-			key: 'updateAngle',
-			value: function updateAngle(reference, redirect) {
-	
-				// console.log(`BEFORE updating angle -> ref = ${reference}, redirect ${redirect}`);
-	
-				var min = redirect ? 30 : 10;
-				var max = redirect ? 45 : 25;
-				var i = this.Pin.Helper.randomise({ min: min, max: max });
-				reference = this.Pin.Helper.boolean() || redirect ? reference -= i : reference += i;
-	
-				if (redirect) {
-	
-					// console.log(`hit wall! change to ${i} = ${reference}`);
-	
-				}
-	
-				if (reference >= 360) {
-	
-					reference = reference - 360;
-				} else if (reference < 0) {
-	
-					reference = 360 - reference * -1;
-				}
-	
-				// console.log(`AFTER updating angle -> ref = ${reference}, redirect ${redirect}`);
-				return reference;
-			}
-		}, {
-			key: 'updateTrajectory',
-			value: function updateTrajectory(i, reference, x, y, speed) {
-	
-				// console.log(`i ${i} | reference ${reference} | x ${x}, y ${y}`);
-	
-				var angle = this.angles[reference];
-				x = angle.x < 0 ? x -= angle.x * speed * -1 : x += angle.x * speed;
-				y = angle.y < 0 ? y -= angle.y * speed * -1 : y += angle.y * speed;
-	
-				// console.log(`instance.x = ${x} vs angle.x = ${angle.x} | instance.y = ${y} vs angle.y = ${angle.y}`);
-				// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
-	
-				return { x: x, y: y };
-			}
-		}, {
-			key: 'scrutiniseRelevance',
-			value: function scrutiniseRelevance(instance) {
-	
-				var reference = instance.reference;
-				var coordinates = undefined;
-				var hypotenuse = undefined;
-				var i = 0;
-	
-				// update current trajectory
-				// test relevance
-				// if NOT relevant than pick another angle
-	
-				// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-				// const coordinates = this.updateTrajectory(instance);
-	
-				// instance.steps = this.updateSteps(instance);
-	
-				do {
-	
-					reference = i === 0 ? reference : this.updateAngle(reference, true);
-					coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
-					hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
-	
-					i += 1;
-	
-					// if (i > 1) {
-					// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
-					// }
-	
-					// } while(!this.Pin.Ring.testRelevance(hypotenuse));
-	
-					// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
-					// 		!this.Pin.Circle.testRelevance(hypotenuse));
-				} while (!this.Pin.Shape.Ring.testRelevance(hypotenuse) && !this.Pin.Shape.Circle.testRelevance(hypotenuse) && !this.Pin.Shape.Triangle.testRelevance(coordinates.x, coordinates.y));
-	
-				return {
-					x: coordinates.x,
-					y: coordinates.y,
-					redirect: i > 1, // how many times did the trajectory get resolved
-					reference: reference
-				};
-			}
-		}, {
-			key: 'calculateHypotenuse',
-			value: function calculateHypotenuse(x, y) {
-	
-				var center = this.Pin.center;
-				var width = x > center ? x - center : center - x;
-				var height = y > center ? y - center : center - y;
-	
-				return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
-			}
-		}]);
-	
-		return Movement;
-	})();
-	
-	module.exports = Movement;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var $ = __webpack_require__(6);
-	var Ring = __webpack_require__(12);
-	var Circle = __webpack_require__(13);
-	var Triangle = __webpack_require__(14);
+	var Ring = __webpack_require__(9);
+	var Circle = __webpack_require__(10);
+	var Triangle = __webpack_require__(11);
 	
 	var Shape = (function () {
 		function Shape(Pin) {
 			_classCallCheck(this, Shape);
-	
-			console.log('new Shape instance');
 	
 			this.Pin = Pin;
 	
@@ -9904,20 +9406,9 @@
 			this.pause = 60;
 		}
 	
-		// this.Pin.Ring.updateDimensions();
-		// this.Pin.Circle.updateDimensions();
-	
 		_createClass(Shape, [{
 			key: 'updateDimensions',
 			value: function updateDimensions() {
-	
-				// console.log('updating shape');
-	
-				// always outer ring
-				// when outer ring = resting | pause fo 1000ms
-				// expand outer ring (may need to also animate the circle too?)
-	
-				// const outerRing = !this.Ring.relevanceOuter || this.Ring.updateOuterRing();
 	
 				if (this.Ring.relevanceOuter) {
 					this.Ring.updateOuterRing();
@@ -9928,22 +9419,6 @@
 				if (!this.Ring.relevanceOuter && this.pause < 0 && this.Ring.relevanceInner) {
 					this.Ring.updateInnerRing();
 				}
-				// console.log(outerRing);
-				// this.pause = outerRing ? this.pause : this.pause += 1;
-				// const innerRing = outerRing && this.pause > 1000 || this.Ring.updateInnerRing();
-	
-				// if (this.Ring.currentOuter > this.Ring.restingOuter) {
-				//
-				// 	this.currentOuter -= 1;
-				//
-				// } else if (this.pause && this.pause !== 0) {
-				//
-				//
-				// } else if (this.Ring.currentOuter === this.Ring.restingOuter && !this.pause) {
-				//
-				// 	this.pause = 1000;
-				//
-				// }
 			}
 		}, {
 			key: 'showDebugTemplate',
@@ -9961,7 +9436,7 @@
 	module.exports = Shape;
 
 /***/ },
-/* 12 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9975,8 +9450,6 @@
 	var Ring = (function () {
 		function Ring(Pin, Shape) {
 			_classCallCheck(this, Ring);
-	
-			console.log('new Ring instance');
 	
 			this.Pin = Pin;
 			this.Shape = Shape;
@@ -10010,8 +9483,6 @@
 			key: 'updateOuterRing',
 			value: function updateOuterRing() {
 	
-				console.log('updating OUTER ring');
-	
 				this.currentOuter -= 1;
 				this.relevanceOuter = this.restingOuter < this.currentOuter;
 			}
@@ -10019,30 +9490,9 @@
 			key: 'updateInnerRing',
 			value: function updateInnerRing() {
 	
-				console.log('updating INNER ring');
-	
 				this.currentInner += 0.25;
 				this.relevanceInner = this.restingInner > this.currentInner;
 			}
-	
-			// updateDimensions() {
-			//
-			// 	if (this.currentOuter > this.restingOuter) {
-			//
-			// 		this.currentOuter -= 1;
-			//
-			// 	} else {
-			//
-			// 		if (this.currentInner < this.restingInner) {
-			//
-			// 			this.currentInner += 0.25;
-			//
-			// 		}
-			//
-			// 	}
-			//
-			// }
-	
 		}, {
 			key: 'testRelevance',
 			value: function testRelevance(hypotenuse) {
@@ -10057,7 +9507,7 @@
 	module.exports = Ring;
 
 /***/ },
-/* 13 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10071,8 +9521,6 @@
 	var Circle = (function () {
 		function Circle(Pin, Shape) {
 			_classCallCheck(this, Circle);
-	
-			console.log('new Circle instance');
 	
 			this.Pin = Pin;
 			this.Shape = Shape;
@@ -10116,7 +9564,7 @@
 	module.exports = Circle;
 
 /***/ },
-/* 14 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10130,8 +9578,6 @@
 	var Triangle = (function () {
 		function Triangle(Pin, Shape) {
 			_classCallCheck(this, Triangle);
-	
-			console.log('new Triangle instance');
 	
 			this.Pin = Pin;
 			this.Shape = Shape;
@@ -10232,6 +9678,578 @@
 	})();
 	
 	module.exports = Triangle;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	var Generate = __webpack_require__(13);
+	var Movement = __webpack_require__(14);
+	
+	var Dots = (function () {
+		function Dots(Pin) {
+			_classCallCheck(this, Dots);
+	
+			this.Pin = Pin;
+			this.radius = 5;
+			this.total = 500;
+			this.color = this.setColors();
+			this.instances = [];
+			this.Generate = new Generate(Pin, this);
+			this.Movement = new Movement(Pin, this);
+	
+			this.moveDots();
+		}
+	
+		_createClass(Dots, [{
+			key: 'setColors',
+			value: function setColors() {
+	
+				return {
+					light: '#13B5EA',
+					dark: '#0D85AB'
+				};
+			}
+		}, {
+			key: 'renderDots',
+			value: function renderDots() {
+	
+				for (var i = 0; i < this.total; i += 1) {
+	
+					this.placeOnCanvas(this.instances[i]);
+				}
+			}
+		}, {
+			key: 'placeOnCanvas',
+			value: function placeOnCanvas(instance) {
+	
+				var ctx = this.Pin.ctx;
+	
+				ctx.beginPath();
+				ctx.arc(instance.x, instance.y, this.radius, 0, Math.PI * 2, true);
+				ctx.fillStyle = instance.color;
+				ctx.fill();
+			}
+		}, {
+			key: 'moveDots',
+			value: function moveDots() {
+				var _this = this;
+	
+				this.Movement.updateDotProperties();
+				this.clearDots();
+				this.renderDots();
+				this.Pin.Shape.updateDimensions();
+				// this.Pin.Shape.showDebugTemplate(); // For debug only
+	
+				requestAnimationFrame(function () {
+					return _this.moveDots();
+				});
+			}
+		}, {
+			key: 'clearDots',
+			value: function clearDots() {
+	
+				this.Pin.ctx.clearRect(0, 0, this.Pin.size, this.Pin.size);
+			}
+		}]);
+	
+		return Dots;
+	})();
+	
+	module.exports = Dots;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Generate = (function () {
+		function Generate(Pin, Dots) {
+			_classCallCheck(this, Generate);
+	
+			this.Pin = Pin;
+			this.Dots = Dots;
+			this.steps = 100;
+	
+			this.displacement = this.generateDisplacement();
+			this.Dots.instances = this.generateInstances();
+			this.generateAnomalies();
+			this.Dots.renderDots();
+		}
+	
+		_createClass(Generate, [{
+			key: 'generateInstances',
+			value: function generateInstances() {
+	
+				var instances = [];
+	
+				for (var i = 0; i < this.Dots.total; i += 1) {
+	
+					var coordinates = this.locateDot();
+					var reference = this.setAngle();
+					var speed = this.setSpeed();
+					var steps = this.setSteps();
+					var color = this.setColor();
+	
+					instances[i] = {
+						x: this.Pin.Helper.round(coordinates.x),
+						y: this.Pin.Helper.round(coordinates.y),
+						reference: reference,
+						speed: speed,
+						steps: steps,
+						color: color,
+						anomaly: false
+					};
+	
+					// console.log(instances[i]);
+				}
+	
+				return instances;
+			}
+		}, {
+			key: 'generateAnomalies',
+			value: function generateAnomalies() {
+	
+				var percent = 10; // anomaly conversion anount (in %)
+				var increment = this.Dots.total / (percent / 100 * this.Dots.total);
+	
+				for (var i = 0; i < this.Dots.total; i += increment) {
+	
+					this.Dots.instances[i].anomaly = true;
+				}
+			}
+		}, {
+			key: 'generateDisplacement',
+			value: function generateDisplacement() {
+	
+				var offset = 200;
+				var max = this.Pin.center - this.Dots.radius - offset;
+				var increment = Math.pow(max, 1 / (this.steps - 1));
+				var displacement = [0, increment];
+	
+				for (var i = 2; i < this.steps; i += 1) {
+	
+					displacement[i] = displacement[i - 1] * increment;
+				}
+	
+				return this.displacementOffset(displacement, offset);
+			}
+		}, {
+			key: 'displacementOffset',
+			value: function displacementOffset(displacement, offset) {
+	
+				for (var i = 0; i < this.steps; i += 1) {
+	
+					displacement[i] += Math.floor(offset);
+				}
+	
+				return displacement;
+			}
+		}, {
+			key: 'locateDot',
+			value: function locateDot() {
+	
+				// displacement = - / + ?
+				// random x value
+				// x = - / + ?
+				// find y with displacement and x
+				// y = - / + ?
+	
+				var displacement = this.setDisplacement();
+				var x = this.setXaxis(displacement);
+				var y = this.setYaxis(x, displacement);
+				var coordinates = this.setOrientation(x, y);
+	
+				return coordinates;
+			}
+		}, {
+			key: 'setDisplacement',
+			value: function setDisplacement() {
+	
+				var i = this.Pin.Helper.randomise({ max: this.steps - 1 });
+				var displacement = this.displacement[i];
+	
+				return displacement;
+			}
+		}, {
+			key: 'setXaxis',
+			value: function setXaxis(displacement) {
+	
+				var x = this.Pin.Helper.randomise({ max: Math.floor(displacement) });
+	
+				return x;
+			}
+		}, {
+			key: 'setYaxis',
+			value: function setYaxis(x, displacement) {
+	
+				var y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
+	
+				return y;
+			}
+		}, {
+			key: 'setOrientation',
+			value: function setOrientation() {
+				for (var _len = arguments.length, coordinates = Array(_len), _key = 0; _key < _len; _key++) {
+					coordinates[_key] = arguments[_key];
+				}
+	
+				for (var i = 0; i < coordinates.length; i += 1) {
+	
+					var center = this.Pin.center;
+	
+					coordinates[i] = this.Pin.Helper.boolean() ? center += coordinates[i] : center -= coordinates[i];
+				}
+	
+				return {
+					x: coordinates[0],
+					y: coordinates[1]
+				};
+			}
+		}, {
+			key: 'setAngle',
+			value: function setAngle() {
+	
+				var angle = this.Pin.Helper.randomise({ max: 359 });
+	
+				return angle;
+			}
+		}, {
+			key: 'setSpeed',
+			value: function setSpeed() {
+	
+				var speed = Math.random() * 2.5 + 1.5;
+				return 1.5; // this.Pin.Helper.round();
+			}
+		}, {
+			key: 'setSteps',
+			value: function setSteps() {
+	
+				return this.Pin.Helper.randomise({ min: 10, max: 40 });
+			}
+		}, {
+			key: 'setColor',
+			value: function setColor() {
+	
+				var tone = this.Pin.Helper.boolean() ? 'light' : 'dark';
+	
+				return this.Dots.color[tone];
+			}
+		}]);
+	
+		return Generate;
+	})();
+	
+	module.exports = Generate;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Movement = (function () {
+		function Movement(Pin, Dots) {
+			_classCallCheck(this, Movement);
+	
+			this.Pin = Pin;
+			this.Dots = Dots;
+			this.angles = this.generateAngles();
+		}
+	
+		_createClass(Movement, [{
+			key: 'generateAngles',
+			value: function generateAngles() {
+	
+				var angles = [];
+	
+				for (var i = 0; i < 90; i += 1) {
+	
+					var offset = this.calculateOffset(i);
+	
+					angles = this.reflectQuadrants(i, angles, offset.x, offset.y);
+				}
+	
+				return angles;
+			}
+		}, {
+			key: 'convertToRadians',
+			value: function convertToRadians(degrees) {
+	
+				// radians : degrees = 1 : 57.2958
+				var ratio = 57.2958;
+	
+				return degrees / ratio;
+			}
+		}, {
+			key: 'reflectQuadrants',
+			value: function reflectQuadrants(i, angles, x, y) {
+	
+				angles[i + 90 * 0] = { x: x, y: y };
+				angles[i + 90 * 1] = { x: x, y: y * -1 };
+				angles[i + 90 * 2] = { x: x * -1, y: y * -1 };
+				angles[i + 90 * 3] = { x: x * -1, y: y };
+	
+				return angles;
+			}
+		}, {
+			key: 'calculateOffset',
+			value: function calculateOffset(i) {
+	
+				var displacement = 1;
+				var degrees = this.convertToRadians(i);
+				var x = Math.sin(degrees) * displacement;
+				var y = Math.cos(degrees) * displacement;
+	
+				return {
+					x: this.Pin.Helper.round(x),
+					y: this.Pin.Helper.round(y)
+				};
+			}
+	
+			//
+			//
+			//
+			//
+			//
+			//
+			//
+	
+		}, {
+			key: 'updateDotProperties',
+			value: function updateDotProperties() {
+	
+				// https://jsbin.com/suvebotoxi/edit?js,console
+				// https://jsbin.com/rivojuyixe/edit?js,console
+	
+				var instances = this.Dots.instances;
+	
+				for (var i = 0; i < this.Dots.total; i += 1) {
+	
+					var instance = instances[i];
+					var updates = this.scrutiniseRelevance(instance);
+	
+					// console.log(updates);
+	
+					// if the relevance needed to be rectified then force steps update!
+					updates.steps = this.updateSteps(instance.steps, updates.redirect);
+					updates.reference = updates.redirect || updates.steps.reset ? this.updateAngle(instance.reference, updates.redirect) : instance.reference;
+	
+					// instance.steps = this.updateSteps(instance);
+					// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
+					// const coordinates = this.updateTrajectory(instance);
+	
+					instances[i] = {
+						x: this.Pin.Helper.round(updates.x),
+						y: this.Pin.Helper.round(updates.y),
+						reference: updates.reference,
+						speed: instance.speed,
+						steps: updates.steps.value,
+						color: instance.color,
+						anomaly: instance.anomaly
+					};
+				}
+	
+				this.Dots.instances = instances;
+			}
+		}, {
+			key: 'updateSteps',
+			value: function updateSteps(value, redirect) {
+	
+				// console.log(`before ${steps}`);
+				value -= 1;
+				var reset = value < 0;
+				value = reset || redirect ? this.Dots.Generate.setSteps() : value;
+	
+				// console.log(`after ${steps}, ${reset}`);
+				return {
+					value: value,
+					reset: reset
+				};
+			}
+		}, {
+			key: 'updateAngle',
+			value: function updateAngle(reference, redirect) {
+	
+				// console.log(`BEFORE updating angle -> ref = ${reference}, redirect ${redirect}`);
+	
+				var min = redirect ? 30 : 10;
+				var max = redirect ? 45 : 25;
+				var i = this.Pin.Helper.randomise({ min: min, max: max });
+				reference = this.Pin.Helper.boolean() || redirect ? reference -= i : reference += i;
+	
+				if (redirect) {
+	
+					// console.log(`hit wall! change to ${i} = ${reference}`);
+	
+				}
+	
+				if (reference >= 360) {
+	
+					reference = reference - 360;
+				} else if (reference < 0) {
+	
+					reference = 360 - reference * -1;
+				}
+	
+				// console.log(`AFTER updating angle -> ref = ${reference}, redirect ${redirect}`);
+				return reference;
+			}
+		}, {
+			key: 'updateTrajectory',
+			value: function updateTrajectory(i, reference, x, y, speed) {
+	
+				// console.log(`i ${i} | reference ${reference} | x ${x}, y ${y}`);
+	
+				var angle = this.angles[reference];
+				x = angle.x < 0 ? x -= angle.x * speed * -1 : x += angle.x * speed;
+				y = angle.y < 0 ? y -= angle.y * speed * -1 : y += angle.y * speed;
+	
+				// console.log(`instance.x = ${x} vs angle.x = ${angle.x} | instance.y = ${y} vs angle.y = ${angle.y}`);
+				// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
+	
+				return { x: x, y: y };
+			}
+		}, {
+			key: 'scrutiniseRelevance',
+			value: function scrutiniseRelevance(instance) {
+	
+				var anomaly = instance.anomaly ? 'canvas' : 'icon';
+				var reference = instance.reference;
+				var coordinates = undefined;
+				var hypotenuse = undefined;
+				var i = 0;
+	
+				do {
+	
+					reference = i === 0 ? reference : this.updateAngle(reference, true);
+					coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
+					hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
+	
+					i += 1;
+	
+					// if (i > 1) {
+					// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
+					// }
+	
+					// } while(!this.Pin.Ring.testRelevance(hypotenuse));
+	
+					// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
+					// 		!this.Pin.Circle.testRelevance(hypotenuse));
+				} while (this[anomaly + 'Relevance'](coordinates.x, coordinates.y, hypotenuse));
+	
+				return {
+					x: coordinates.x,
+					y: coordinates.y,
+					redirect: i > 1, // how many times did the trajectory get resolved
+					reference: reference
+				};
+			}
+		}, {
+			key: 'canvasRelevance',
+			value: function canvasRelevance(x, y, hypotenuse) {
+	
+				return hypotenuse > this.Pin.center;
+			}
+		}, {
+			key: 'iconRelevance',
+			value: function iconRelevance(x, y, hypotenuse) {
+	
+				return !this.Pin.Shape.Ring.testRelevance(hypotenuse) && !this.Pin.Shape.Circle.testRelevance(hypotenuse) && !this.Pin.Shape.Triangle.testRelevance(x, y);
+			}
+		}, {
+			key: 'calculateHypotenuse',
+			value: function calculateHypotenuse(x, y) {
+	
+				var center = this.Pin.center;
+				var width = x > center ? x - center : center - x;
+				var height = y > center ? y - center : center - y;
+	
+				return Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+			}
+		}]);
+	
+		return Movement;
+	})();
+	
+	module.exports = Movement;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var $ = __webpack_require__(6);
+	
+	var Heading = (function () {
+		function Heading(Pin) {
+			_classCallCheck(this, Heading);
+	
+			this.Pin = Pin;
+	
+			this.createSvg('xerocon');
+			this.createSvg('location');
+		}
+	
+		_createClass(Heading, [{
+			key: 'createSvg',
+			value: function createSvg(text) {
+	
+				var $wrapper = $('<div class="heading heading--' + text + '" />');
+				var svg = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve" />';
+				var paths = this[text + 'PathData']();
+				var html = '';
+	
+				for (var i = 0; i < paths.length; i += 1) {
+	
+					html += '\n\t\t\t\t<svg class="heading__svg "version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve">\n\t\t\t\t\t<path d="' + paths[i] + '" />\n\t\t\t\t</svg>';
+				}
+	
+				this.Pin.$logo.append($wrapper.html(html));
+			}
+		}, {
+			key: 'xeroconPathData',
+			value: function xeroconPathData() {
+	
+				return ['M17.4,19.2L9.5,7.1C9.1,6.6,9.5,6,10.1,6h5.7c0.3,0,0.5,0.2,0.6,0.3l4.5,7.2h0l4.6-7.2C25.7,6.2,25.9,6,26.2,6h5.7c0.7,0,1,0.6,0.7,1.1l-7.9,12.1l8.2,12.8c0.4,0.5,0,1.1-0.6,1.1h-5.4c-0.2,0-0.5-0.2-0.7-0.3L21,24.9h-0.1l-5,7.8c-0.1,0.2-0.4,0.3-0.7,0.3H9.8c-0.7,0-1-0.6-0.7-1.1L17.4,19.2z', 'M37,6.7C37,6.3,37.3,6,37.7,6h15.6C53.7,6,54,6.3,54,6.7v4.2c0,0.4-0.3,0.7-0.7,0.7H42.9v4.8h8.6c0.4,0,0.7,0.3,0.7,0.7v4.2c0,0.4-0.3,0.7-0.7,0.7h-8.6v5.2h10.4c0.4,0,0.7,0.3,0.7,0.7v4.2c0,0.4-0.3,0.7-0.7,0.7H37.7c-0.4,0-0.7-0.3-0.7-0.7V6.7z', 'M58,6.7C58,6.3,58.3,6,58.7,6h11.2c4.5,0,8.1,3.7,8.1,8.3c0,3.5-2.3,6.4-5.5,7.8l5.1,9.8c0.3,0.5,0,1.1-0.6,1.1h-5c-0.3,0-0.5-0.2-0.6-0.3l-5-10.2h-2.6v9.8c0,0.4-0.3,0.7-0.7,0.7h-4.4c-0.4,0-0.7-0.3-0.7-0.7V6.7z M69.4,17.5c1.5,0,2.8-1.5,2.8-3.1c0-1.6-1.3-2.9-2.8-2.9h-5.5v6H69.4z', 'M96,5c7.8,0,14,6.3,14,14s-6.2,14-14,14s-14-6.2-14-14S88.2,5,96,5 M96,26.8c4.3,0,7.8-3.5,7.8-7.7c0-4.3-3.5-7.8-7.8-7.8c-4.2,0-7.7,3.5-7.7,7.8C88.2,23.3,91.7,26.8,96,26.8', 'M126,5c3.6,0,6.3,1.2,8.7,3.6c0.3,0.3,0.3,0.8,0,1.1l-2.8,3.2c-0.3,0.3-0.7,0.3-0.9,0c-1.3-1.3-3.1-2-4.9-2c-4.1,0-7.1,3.7-7.1,8c0,4.3,3,7.9,7.1,7.9c1.7,0,3.5-0.7,4.8-1.9c0.3-0.2,0.7-0.2,0.9,0l2.8,3.2c0.3,0.3,0.2,0.8,0,1c-2.5,2.6-5.6,3.8-8.8,3.8c-7.2,0-13-6.2-13-14C113,11.3,118.8,5,126,5', 'M152,5c7.8,0,14,6.3,14,14s-6.2,14-14,14c-7.8,0-14-6.2-14-14S144.2,5,152,5M152,26.8c4.3,0,7.8-3.5,7.8-7.7c0-4.3-3.5-7.8-7.8-7.8c-4.2,0-7.8,3.5-7.8,7.8C144.2,23.3,147.7,26.8,152,26.8', 'M169,5.7c0-0.4,0.3-0.7,0.7-0.7h0.9l14.6,14.9h0V6.1c0-0.4,0.3-0.7,0.7-0.7h4.4c0.4,0,0.7,0.3,0.7,0.7v26.2c0,0.4-0.3,0.7-0.7,0.7h-0.6c-0.1,0-0.4-0.1-0.5-0.2l-14.4-15.4h0v14.5c0,0.4-0.3,0.7-0.7,0.7h-4.3c-0.4,0-0.7-0.4-0.7-0.7L169,5.7z'];
+			}
+		}, {
+			key: 'locationPathData',
+			value: function locationPathData() {
+	
+				return ['M10,6.5C10,6.2,10.2,6,10.6,6H14c0.3,0,0.6,0.2,0.6,0.5V21h6.9c0.3,0,0.6,0.2,0.6,0.5v3c0,0.3-0.2,0.5-0.6,0.5H10.6c-0.3,0-0.6-0.2-0.6-0.5V6.5z', 'M32,6c5.6,0,10,4.5,10,10s-4.5,10-10,10c-5.6,0-10-4.4-10-10S26.4,6,32,6 M32,21.6c3.1,0,5.6-2.5,5.6-5.5c0-3.1-2.5-5.6-5.6-5.6c-3,0-5.5,2.5-5.5,5.6C26.5,19.1,29,21.6,32,21.6', 'M45,6.5C45,6.2,45.3,6,45.5,6h0.7l11.3,10.7h0V6.8c0-0.3,0.2-0.5,0.5-0.5h3.4c0.3,0,0.5,0.3,0.5,0.5v18.7c0,0.3-0.3,0.5-0.5,0.5H61c-0.1,0-0.3-0.1-0.4-0.1l-11.2-11h0v10.4c0,0.3-0.2,0.5-0.5,0.5h-3.4c-0.3,0-0.5-0.2-0.5-0.5L45,6.5z', 'M67,6.5C67,6.2,67.2,6,67.5,6h6.8c5.4,0,9.7,4.3,9.7,9.5c0,5.3-4.4,9.5-9.7,9.5h-6.8c-0.3,0-0.5-0.2-0.5-0.5V6.5z M74,21c3.1,0,5.4-2.4,5.4-5.5c0-3.1-2.3-5.5-5.4-5.5h-2.7v11H74z', 'M96,6c5.6,0,10,4.5,10,10s-4.5,10-10,10s-10-4.4-10-10S90.4,6,96,6 M96,21.6c3.1,0,5.6-2.5,5.6-5.5c0-3.1-2.5-5.6-5.6-5.6c-3,0-5.5,2.5-5.5,5.6C90.5,19.1,93,21.6,96,21.6', 'M110,6.5c0-0.3,0.3-0.5,0.5-0.5h0.7l11.3,10.7h0V6.8c0-0.3,0.2-0.5,0.5-0.5h3.4c0.3,0,0.5,0.3,0.5,0.5v18.7c0,0.3-0.3,0.5-0.5,0.5H126c-0.1,0-0.3-0.1-0.4-0.1l-11.2-11h0v10.4c0,0.3-0.2,0.5-0.5,0.5h-3.4c-0.3,0-0.5-0.2-0.5-0.5L110,6.5z', 'M135,23.9c1.7-2.2,6-8,7.8-10.6c0.4-0.6,0.8-1.4,0.8-2.2c0-1.1-0.9-2.1-2.6-2.1c-1.2,0-2.3,0.8-2.8,1.5c-0.2,0.2-0.6,0.2-0.8,0l-1.8-1.8c-0.2-0.2-0.2-0.5,0-0.8c0,0,2.4-2.8,5.9-2.8c4.2,0,6.7,2.6,6.7,5.9c0,1.5-0.4,2.4-1.1,3.8c-0.9,1.7-3.3,4.8-4.7,6.7h5.2c0.3,0,0.6,0.3,0.6,0.6v2.6c0,0.3-0.3,0.6-0.6,0.6h-11.7c-0.3,0-0.6-0.3-0.6-0.6V23.9z', 'M151,15c0-6.3,2.7-10,7.5-10c4.8,0,7.5,3.7,7.5,10c0,6.3-2.7,10-7.5,10C153.7,25,151,21.3,151,15 M161.3,15c0-3.7-1-5.9-2.8-5.9s-2.8,2.1-2.8,5.9c0,3.8,1,5.9,2.8,5.9S161.3,18.8,161.3,15', 'M171,12.2h-2.6c-0.3,0-0.5-0.3-0.5-0.6V9.8c0-0.1,0.1-0.4,0.2-0.4l3.9-3.4h2.5c0.3,0,0.5,0.3,0.5,0.6v18.9c0,0.3-0.2,0.6-0.5,0.6h-3c-0.3,0-0.5-0.3-0.5-0.6V12.2z', 'M188.3,5c0.4-0.1,0.7,0.1,0.9,0.5l0.8,2.3c0.1,0.4,0,0.7-0.5,0.9c-1.3,0.4-5,1.8-5.6,4.8c0.7-0.3,1.9-0.6,2.6-0.6c2.6,0,5.5,2,5.5,6.4c0,3.7-2.9,6.7-6.3,6.7c-4.3,0-6.7-3.4-6.7-8C179,9.3,185.9,5.8,188.3,5 M185.6,21.9c1.5,0,2.7-1.3,2.7-2.8c0-1.6-1.2-2.9-2.7-2.9c-1.5,0-2.7,1.3-2.7,2.9C183,20.6,184.1,21.9,185.6,21.9'];
+			}
+		}]);
+	
+		return Heading;
+	})();
+	
+	module.exports = Heading;
 
 /***/ }
 /******/ ]);

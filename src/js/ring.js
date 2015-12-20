@@ -4,8 +4,6 @@ const Ring = class {
 
 	constructor(Pin, Shape) {
 
-		console.log('new Ring instance');
-
 		this.Pin = Pin;
 		this.Shape = Shape;
 

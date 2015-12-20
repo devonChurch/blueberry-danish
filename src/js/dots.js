@@ -6,11 +6,9 @@ const Dots = class {
 
 	constructor(Pin) {
 
-		console.log('new Dots instance');
-
 		this.Pin = Pin;
 		this.radius = 5;
-		this.total = 400;
+		this.total = 500;
 		this.color = this.setColors();
 		this.instances = [];
 		this.Generate = new Generate(Pin, this);

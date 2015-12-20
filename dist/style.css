@@ -7,14 +7,59 @@
 body {
   margin: 0; }
 
-body {
-  background-image: url("/img/xerocon-background.jpg");
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: auto 1000px; }
+.logo {
+  background: black;
+  border-radius: 50%;
+  height: 1000px;
+  overflow: hidden;
+  width: 1000px; }
+  .logo,
+  .logo > * {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); }
+  .logo > * {
+    z-index: 1; }
+  .logo:after {
+    background-image: url("/img/xerocon-background.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    bottom: -50px;
+    content: '';
+    display: block;
+    left: -50px;
+    opacity: 0.5;
+    position: absolute;
+    right: -50px;
+    top: -50px;
+    transition: -webkit-transform 1s ease-out;
+    transition: transform 1s ease-out;
+    transition: transform 1s ease-out, -webkit-transform 1s ease-out; }
+  .logo--dormant.logo:after {
+    -webkit-transform: scale(0.9);
+            transform: scale(0.9); }
 
 .pin {
-  display: block;
-  margin: auto; }
+  display: block; }
+
+.heading {
+  height: 38px;
+  width: 200px; }
+  .heading--xerocon {
+    fill: white;
+    margin-top: 240px; }
+  .heading--location {
+    fill: #13B5EA;
+    margin-top: 278px; }
+  .heading__svg {
+    display: block;
+    height: 38px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 200px; }
 
 /*# sourceMappingURL=style.css.map*/

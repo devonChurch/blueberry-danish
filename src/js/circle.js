@@ -4,8 +4,6 @@ const Circle = class {
 
 	constructor(Pin, Shape) {
 
-		console.log('new Circle instance');
-
 		this.Pin = Pin;
 		this.Shape = Shape;
 

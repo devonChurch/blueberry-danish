@@ -4,8 +4,6 @@ const Movement = class {
 
 	constructor(Pin, Dots) {
 
-		console.log('new Movement instance');
-
 		this.Pin = Pin;
 		this.Dots = Dots;
 		this.angles = this.generateAngles();
@@ -99,7 +97,8 @@ const Movement = class {
 				reference: updates.reference,
 				speed: instance.speed,
 				steps: updates.steps.value,
-				color: instance.color
+				color: instance.color,
+				anomaly: instance.anomaly
 			};
 
 		}
@@ -170,20 +169,11 @@ const Movement = class {
 
 	scrutiniseRelevance(instance) {
 
+		const anomaly = instance.anomaly ? 'canvas' : 'icon';
 		let reference = instance.reference;
 		let coordinates;
 		let hypotenuse;
 		let i = 0;
-
-		// update current trajectory
-		// test relevance
-		// if NOT relevant than pick another angle
-
-
-		// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-		// const coordinates = this.updateTrajectory(instance);
-
-		// instance.steps = this.updateSteps(instance);
 
 		do {
 
@@ -203,9 +193,7 @@ const Movement = class {
 		// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
 		// 		!this.Pin.Circle.testRelevance(hypotenuse));
 
-	} while(!this.Pin.Shape.Ring.testRelevance(hypotenuse) &&
-				!this.Pin.Shape.Circle.testRelevance(hypotenuse) &&
-				!this.Pin.Shape.Triangle.testRelevance(coordinates.x, coordinates.y));
+	} while(this[`${anomaly}Relevance`](coordinates.x, coordinates.y, hypotenuse));
 
 		return {
 			x: coordinates.x,
@@ -213,6 +201,20 @@ const Movement = class {
 			redirect: i > 1, // how many times did the trajectory get resolved
 			reference
 		};
+
+	}
+
+	canvasRelevance(x, y, hypotenuse) {
+
+		return hypotenuse > this.Pin.center;
+
+	}
+
+	iconRelevance(x, y, hypotenuse) {
+
+		return !this.Pin.Shape.Ring.testRelevance(hypotenuse) &&
+               !this.Pin.Shape.Circle.testRelevance(hypotenuse) &&
+               !this.Pin.Shape.Triangle.testRelevance(x, y);
 
 	}
 

@@ -8,8 +8,6 @@ const Pin = class {
 
 	constructor() {
 
-		console.log('new Pin instance');
-
 		this.$logo = $('#logo');
 		this.size = 1000;
 		this.center = this.size / 2;
@@ -20,6 +18,8 @@ const Pin = class {
 		this.Dots = new Dots(this);
 		this.Heading = new Heading(this);
 
+		this.activateLogo();
+
 	}
 
 	generateCanvas() {
@@ -29,6 +29,12 @@ const Pin = class {
 		this.$logo.append($canvas);
 
 		return $canvas[0].getContext('2d');
+
+	}
+
+	activateLogo() {
+
+		this.$logo.removeClass('logo--dormant');
 
 	}
 

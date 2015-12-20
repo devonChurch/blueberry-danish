@@ -19,7 +19,7 @@
     }
 
     &:after {
-        $offset: -50px;
+        $offset: 0;
         background: {
             image: url('/img/xerocon-background.jpg');
             position: center center;
@@ -34,6 +34,11 @@
         position: absolute;
         right: $offset;
         top: $offset;
+        transition: transform 10s ease-out;
+    }
+
+    &--dormant#{&}:after {
+        transform: scale(1.2);
     }
 }
 
@@ -42,28 +47,30 @@
 }
 
 $heading--offset: 240px;
-$heading--segment: 38px;
+$heading--height: 38px;
+$heading--width: 200px;
 $heading--location: 31px;
 
 .heading {
-    display: block;
-    height: $heading--segment;
-    width: auto;
+    height: $heading--height;
+    width: $heading--width;
 
-    &--dormant > path {
-        // position: relative;
-        // transition: translateY(-100px);
-        y: -100px;
+    &--xerocon {
+        fill: white;
+        margin-top: $heading--offset;
     }
-}
 
-.xerocon {
-    fill: white;
-    margin-top: $heading--offset;
-    width: auto;
-}
+    &--location {
+        fill: #13B5EA;
+        margin-top: $heading--offset + $heading--height;
+    }
 
-.location {
-    fill: #13B5EA;
-    margin-top: $heading--offset + $heading--segment;
+    &__svg {
+        display: block;
+        height: $heading--height;
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: $heading--width;
+    }
 }

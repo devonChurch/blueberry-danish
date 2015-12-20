@@ -4,8 +4,6 @@ const Helper = class {
 
 	constructor(Pin) {
 
-		console.log('new Helper instance');
-
 		this.Pin = Pin;
 
 	}

@@ -4,15 +4,13 @@ const Generate = class {
 
 	constructor(Pin, Dots) {
 
-		console.log('new Generate instance');
-
 		this.Pin = Pin;
 		this.Dots = Dots;
 		this.steps = 100;
 
 		this.displacement = this.generateDisplacement();
 		this.Dots.instances = this.generateInstances();
-		// create anomaly
+		this.generateAnomalies();
 		this.Dots.renderDots();
 
 	}
@@ -35,7 +33,8 @@ const Generate = class {
 				reference,
 				speed,
 				steps: steps,
-				color
+				color,
+				anomaly: false
 			};
 
 			// console.log(instances[i]);
@@ -43,6 +42,19 @@ const Generate = class {
 		}
 
 		return instances;
+
+	}
+
+	generateAnomalies() {
+
+		const percent = 10; // anomaly conversion anount (in %)
+		const increment = this.Dots.total / (percent / 100 * this.Dots.total);
+
+		for (let i = 0; i < this.Dots.total; i += increment) {
+
+			this.Dots.instances[i].anomaly = true;
+
+		}
 
 	}
 

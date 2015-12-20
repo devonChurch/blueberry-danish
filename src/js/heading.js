@@ -4,8 +4,6 @@ const Heading = class {
 
 	constructor(Pin) {
 
-		console.log('new Heading instance');
-
 		this.Pin = Pin;
 
 		this.createSvg('xerocon');
@@ -15,24 +13,21 @@ const Heading = class {
 
 	createSvg(text) {
 
-		const $svg = $(`<svg class="${text} heading heading--dormant" version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve" />`);
-		const paths = this.constructPaths(this[`${text}PathData`]());
-
-		this.Pin.$logo.append($svg.html(paths));
-
-	}
-
-	constructPaths(paths) {
-
+		const $wrapper = $(`<div class="heading heading--${text}" />`);
+		const svg = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve" />';
+		const paths = this[`${text}PathData`]();
 		let html = '';
 
 		for (let i = 0; i < paths.length; i += 1) {
 
-			html += `<path d="${paths[i]}" />`;
+			html += `
+				<svg class="heading__svg "version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve">
+					<path d="${paths[i]}" />
+				</svg>`;
 
 		}
 
-		return html;
+		this.Pin.$logo.append($wrapper.html(html));
 
 	}
 

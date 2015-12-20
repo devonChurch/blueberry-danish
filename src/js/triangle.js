@@ -4,8 +4,6 @@ const Triangle = class {
 
 	constructor(Pin, Shape) {
 
-		console.log('new Triangle instance');
-
 		this.Pin = Pin;
 		this.Shape = Shape;
 

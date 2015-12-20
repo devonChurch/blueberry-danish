@@ -1,9 +1,7 @@
 const $ = require('jquery');
 const Helper = require('./helper');
 const Dots = require('./dots');
-const Ring = require('./ring');
-const Circle = require('./circle');
-const Triangle = require('./triangle');
+const Shape = require('./shape');
 
 const Pin = class {
 
@@ -16,10 +14,8 @@ const Pin = class {
 		this.ctx = this.generateCanvas();
 
 		this.Helper = new Helper(this);
-		this.Ring = new Ring(this);
-		this.Circle = new Circle(this);
-		this.Triangle = new Triangle(this);
-		this.Dots = new Dots(this); // new Generate(); // new Placement
+		this.Shape = new Shape(this);
+		this.Dots = new Dots(this);
 
 	}
 

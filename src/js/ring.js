@@ -2,16 +2,20 @@ const $ = require('jquery');
 
 const Ring = class {
 
-	constructor(Pin) {
+	constructor(Pin, Shape) {
 
 		console.log('new Ring instance');
 
 		this.Pin = Pin;
+		this.Shape = Shape;
 
+		this.relevanceOuter = true;
 		this.restingOuter = 150;
-		this.restingInner = 104;
-
 		this.currentOuter = this.Pin.center;
+
+
+		this.relevanceInner = true;
+		this.restingInner = 104;
 		this.currentInner = 25;
 
 	}
@@ -33,21 +37,41 @@ const Ring = class {
 
 	}
 
-	updateDimensions() {
+	updateOuterRing() {
 
-		if (this.currentOuter > this.restingOuter) {
+		console.log('updating OUTER ring');
 
-			this.currentOuter -= 1;
-
-		}
-
-		if (this.currentInner < this.restingInner) {
-
-			this.currentInner += 0.25;
-
-		}
+		this.currentOuter -= 1;
+		this.relevanceOuter = this.restingOuter < this.currentOuter;
 
 	}
+
+	updateInnerRing() {
+
+		console.log('updating INNER ring');
+
+		this.currentInner += 0.25;
+		this.relevanceInner = this.restingInner > this.currentInner;
+
+	}
+
+	// updateDimensions() {
+	//
+	// 	if (this.currentOuter > this.restingOuter) {
+	//
+	// 		this.currentOuter -= 1;
+	//
+	// 	} else {
+	//
+	// 		if (this.currentInner < this.restingInner) {
+	//
+	// 			this.currentInner += 0.25;
+	//
+	// 		}
+	//
+	// 	}
+	//
+	// }
 
 	testRelevance(hypotenuse) {
 

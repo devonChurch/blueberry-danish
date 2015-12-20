@@ -197,19 +197,15 @@ const Movement = class {
 			// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
 			// }
 
-			// x = this.Pin.Helper.boolean() ? instance.x + increment : instance.x - increment;
-			// y = this.Pin.Helper.boolean() ? instance.y + increment : instance.y - increment;
-			// hypotenuse = this.calculateHypotenuse(x, y);
-
 
 		// } while(!this.Pin.Ring.testRelevance(hypotenuse));
 
 		// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
 		// 		!this.Pin.Circle.testRelevance(hypotenuse));
 
-		} while(!this.Pin.Ring.testRelevance(hypotenuse) &&
-				!this.Pin.Circle.testRelevance(hypotenuse) &&
-				!this.Pin.Triangle.testRelevance(coordinates.x, coordinates.y));
+	} while(!this.Pin.Shape.Ring.testRelevance(hypotenuse) &&
+				!this.Pin.Shape.Circle.testRelevance(hypotenuse) &&
+				!this.Pin.Shape.Triangle.testRelevance(coordinates.x, coordinates.y));
 
 		return {
 			x: coordinates.x,

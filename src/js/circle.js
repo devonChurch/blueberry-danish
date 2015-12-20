@@ -2,14 +2,15 @@ const $ = require('jquery');
 
 const Circle = class {
 
-	constructor(Pin) {
+	constructor(Pin, Shape) {
 
 		console.log('new Circle instance');
 
 		this.Pin = Pin;
+		this.Shape = Shape;
 
 		this.restingRadius = 36;
-		this.currentRadius = this.Pin.Ring.currentInner + 5; // Slight overlap with rings inner radius
+		this.currentRadius = this.Shape.Ring.currentInner + 5; // Slight overlap with rings inner radius
 
 	}
 

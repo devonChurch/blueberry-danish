@@ -56,19 +56,10 @@ const Dots = class {
 		this.Movement.updateDotProperties();
 		this.clearDots();
 		this.renderDots();
-		this.Pin.Ring.updateDimensions();
-		this.Pin.Circle.updateDimensions();
-		this.showDebugTemplate(); // For debug only
+		this.Pin.Shape.updateDimensions();
+		// this.Pin.Shape.showDebugTemplate(); // For debug only
 
 		requestAnimationFrame(() => this.moveDots());
-
-	}
-
-	showDebugTemplate() {
-
-		this.Pin.Ring.generateStencil();
-		this.Pin.Circle.generateStencil();
-		this.Pin.Triangle.generateStencil();
 
 	}
 

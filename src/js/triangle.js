@@ -2,11 +2,13 @@ const $ = require('jquery');
 
 const Triangle = class {
 
-	constructor(Pin) {
+	constructor(Pin, Shape) {
 
 		console.log('new Triangle instance');
 
 		this.Pin = Pin;
+		this.Shape = Shape;
+
 		this.size = 84;
 		this.x = this.Pin.center - (this.size / 2);
 		this.y = this.Pin.center + 130;

@@ -104,8 +104,12 @@
 		}, {
 			key: 'activateLogo',
 			value: function activateLogo() {
+				var _this = this;
 	
-				this.$logo.removeClass('logo--dormant');
+				setTimeout(function () {
+	
+					_this.$logo.removeClass('logo--dormant');
+				}, 0);
 			}
 		}]);
 	

@@ -27,20 +27,20 @@ body {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
-    bottom: -50px;
+    bottom: 0;
     content: '';
     display: block;
-    left: -50px;
+    left: 0;
     opacity: 0.5;
     position: absolute;
-    right: -50px;
-    top: -50px;
-    transition: -webkit-transform 1s ease-out;
-    transition: transform 1s ease-out;
-    transition: transform 1s ease-out, -webkit-transform 1s ease-out; }
+    right: 0;
+    top: 0;
+    transition: -webkit-transform 10s ease-out;
+    transition: transform 10s ease-out;
+    transition: transform 10s ease-out, -webkit-transform 10s ease-out; }
   .logo--dormant.logo:after {
-    -webkit-transform: scale(0.9);
-            transform: scale(0.9); }
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2); }
 
 .pin {
   display: block; }
@@ -51,15 +51,57 @@ body {
   .heading--xerocon {
     fill: white;
     margin-top: 240px; }
+    .heading--xerocon .heading__svg:nth-of-type(1) {
+      transition-delay: 1200; }
+    .heading--xerocon .heading__svg:nth-of-type(2) {
+      transition-delay: 1400; }
+    .heading--xerocon .heading__svg:nth-of-type(3) {
+      transition-delay: 1600; }
+    .heading--xerocon .heading__svg:nth-of-type(4) {
+      transition-delay: 1800; }
+    .heading--xerocon .heading__svg:nth-of-type(5) {
+      transition-delay: 2000; }
+    .heading--xerocon .heading__svg:nth-of-type(6) {
+      transition-delay: 2200; }
+    .heading--xerocon .heading__svg:nth-of-type(7) {
+      transition-delay: 2400; }
   .heading--location {
     fill: #13B5EA;
     margin-top: 278px; }
+    .heading--location .heading__svg:nth-of-type(1) {
+      transition-delay: 2200; }
+    .heading--location .heading__svg:nth-of-type(2) {
+      transition-delay: 2400; }
+    .heading--location .heading__svg:nth-of-type(3) {
+      transition-delay: 2600; }
+    .heading--location .heading__svg:nth-of-type(4) {
+      transition-delay: 2800; }
+    .heading--location .heading__svg:nth-of-type(5) {
+      transition-delay: 3000; }
+    .heading--location .heading__svg:nth-of-type(6) {
+      transition-delay: 3200; }
+    .heading--location .heading__svg:nth-of-type(7) {
+      transition-delay: 3400; }
+    .heading--location .heading__svg:nth-of-type(8) {
+      transition-delay: 3600; }
+    .heading--location .heading__svg:nth-of-type(9) {
+      transition-delay: 3800; }
+    .heading--location .heading__svg:nth-of-type(10) {
+      transition-delay: 4000; }
   .heading__svg {
     display: block;
     height: 38px;
     left: 0;
     position: absolute;
     top: 0;
+    transition: 2s ease-out;
+    transition-property: opacity, -webkit-transform;
+    transition-property: opacity, transform;
+    transition-property: opacity, transform, -webkit-transform;
     width: 200px; }
+    .logo--dormant .heading__svg {
+      opacity: 0;
+      -webkit-transform: translateY(20px);
+              transform: translateY(20px); }
 
 /*# sourceMappingURL=style.css.map*/

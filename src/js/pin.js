@@ -34,7 +34,11 @@ const Pin = class {
 
 	activateLogo() {
 
-		this.$logo.removeClass('logo--dormant');
+		setTimeout(() => {
+
+			this.$logo.removeClass('logo--dormant');
+
+		}, 0);
 
 	}
 

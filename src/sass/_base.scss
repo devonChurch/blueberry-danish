@@ -1,29 +1,3 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:300);
-
-$palette: (
-    blueDark: #178bbf,
-    blueMedium: #14b5ea,
-    blueLight: #68d8fd
-);
-
-@function palette($color) {
-    @return map-get($palette, $color);
-}
-
-$speeds: (
-    base: 0.25s
-);
-
-@function speed($speed: base) {
-    @return map-get($speeds, $speed);
-}
-
-$padding: 1.25rem;
-$radius: 0.3rem;
-$tile--size: 100px;
-$tile--frames: 13;
-$sprite--height: 140px;
-
 html {
   box-sizing: border-box;
 }

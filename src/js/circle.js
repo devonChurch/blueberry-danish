@@ -6,9 +6,7 @@ const Circle = class {
 
 		this.Pin = Pin;
 		this.Shape = Shape;
-
-		this.restingRadius = 36;
-		this.currentRadius = this.Shape.Ring.currentInner + 5; // Slight overlap with rings inner radius
+		this.radius = 36;
 
 	}
 
@@ -18,25 +16,15 @@ const Circle = class {
 		const center = this.Pin.center;
 
 		ctx.beginPath();
-		ctx.arc(center, center, this.currentRadius, 0, Math.PI * 2, true);
-		ctx.strokeStyle = 'black';
+		ctx.arc(center, center, this.radius, 0, Math.PI * 2, true);
+		ctx.strokeStyle = 'hotpink';
 		ctx.stroke();
-
-	}
-
-	updateDimensions() {
-
-		if (this.currentRadius > this.restingRadius) {
-
-			this.currentRadius -= 2;
-
-		}
 
 	}
 
 	testRelevance(hypotenuse) {
 
-		return hypotenuse < this.currentRadius ? true : false;
+		return hypotenuse < this.radius ? true : false;
 
 	}
 

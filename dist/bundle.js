@@ -75,6 +75,21 @@
 	var Heading = __webpack_require__(15);
 	
 	var Pin = (function () {
+	
+		// Wrapper for the “Pin icon” system. The hierarchy below depicts the Class
+		// based structure of this execution.
+		//
+		// -> PIN
+		//	  —> HELPER
+		//	  —> SHAPE
+		//	     -> RING
+		//	     -> CIRCLE
+		//	     -> TRIANGLE
+		//	  —> DOTS
+		//	     -> GENERATE
+		//	     -> MOVEMENT
+		//	  -> HEADING
+	
 		function Pin() {
 			_classCallCheck(this, Pin);
 	
@@ -106,10 +121,13 @@
 			value: function activateLogo() {
 				var _this = this;
 	
+				// Wait for the next CPU cycle otherwise the removeClass fn. is not
+				// triggered correctly.
+	
 				setTimeout(function () {
 	
 					_this.$logo.removeClass('logo--dormant');
-				}, 0);
+				}, 100);
 			}
 		}]);
 	
@@ -9347,6 +9365,9 @@
 	var $ = __webpack_require__(6);
 	
 	var Helper = (function () {
+	
+		// A series of more “generic” functions uses across the execution.
+	
 		function Helper(Pin) {
 			_classCallCheck(this, Helper);
 	
@@ -9372,8 +9393,19 @@
 			key: 'round',
 			value: function round(value) {
 	
-				// Round value to 1 Decimal place
+				// Round value to 1 Decimal place (This helps lessen the computation
+				// burden when doing mass calculations to a large amount of decimal
+				// places).
+	
 				return Math.round(value * 10) / 10;
+			}
+		}, {
+			key: 'convertToRadians',
+			value: function convertToRadians(degrees) {
+	
+				// radians : degrees = 1 : 57.2958
+	
+				return degrees / 57.2958;
 			}
 		}]);
 	
@@ -9398,6 +9430,11 @@
 	var Triangle = __webpack_require__(11);
 	
 	var Shape = (function () {
+	
+		// Builds the Xerocon pin icon’s shape elements. We also control the shapes
+		// resize animation here (condenses the dots into the icon’s final resting
+		// shape).
+	
 		function Shape(Pin) {
 			_classCallCheck(this, Shape);
 	
@@ -9407,6 +9444,8 @@
 			this.Circle = new Circle(Pin, this);
 			this.Triangle = new Triangle(Pin, this);
 	
+			// The amount of requestAnimationFrames the space between the outer ring
+			// animation finishing and the inner ring animation starting.
 			this.pause = 60;
 		}
 	
@@ -9427,6 +9466,9 @@
 		}, {
 			key: 'showDebugTemplate',
 			value: function showDebugTemplate() {
+	
+				// Shows an outline of each of the icons shape elements (great for
+				// debugging relevance and animation calculations).
 	
 				this.Ring.generateStencil();
 				this.Circle.generateStencil();
@@ -9479,7 +9521,7 @@
 	
 					ctx.beginPath();
 					ctx.arc(center, center, radii[i], 0, Math.PI * 2, true);
-					ctx.strokeStyle = 'black';
+					ctx.strokeStyle = 'hotpink';
 					ctx.stroke();
 				}
 			}
@@ -9487,7 +9529,7 @@
 			key: 'updateOuterRing',
 			value: function updateOuterRing() {
 	
-				this.currentOuter -= 1;
+				this.currentOuter -= 0.8;
 				this.relevanceOuter = this.restingOuter < this.currentOuter;
 			}
 		}, {
@@ -9528,9 +9570,7 @@
 	
 			this.Pin = Pin;
 			this.Shape = Shape;
-	
-			this.restingRadius = 36;
-			this.currentRadius = this.Shape.Ring.currentInner + 5; // Slight overlap with rings inner radius
+			this.radius = 36;
 		}
 	
 		_createClass(Circle, [{
@@ -9541,24 +9581,15 @@
 				var center = this.Pin.center;
 	
 				ctx.beginPath();
-				ctx.arc(center, center, this.currentRadius, 0, Math.PI * 2, true);
-				ctx.strokeStyle = 'black';
+				ctx.arc(center, center, this.radius, 0, Math.PI * 2, true);
+				ctx.strokeStyle = 'hotpink';
 				ctx.stroke();
-			}
-		}, {
-			key: 'updateDimensions',
-			value: function updateDimensions() {
-	
-				if (this.currentRadius > this.restingRadius) {
-	
-					this.currentRadius -= 2;
-				}
 			}
 		}, {
 			key: 'testRelevance',
 			value: function testRelevance(hypotenuse) {
 	
-				return hypotenuse < this.currentRadius ? true : false;
+				return hypotenuse < this.radius ? true : false;
 			}
 		}]);
 	
@@ -9633,7 +9664,7 @@
 				ctx.lineTo(this.x + this.size, this.y);
 				ctx.lineTo(this.Pin.center, this.size / 2 * this.ratio + this.y);
 				ctx.lineTo(this.x, this.y);
-				ctx.strokeStyle = 'black';
+				ctx.strokeStyle = 'hotpink';
 				ctx.stroke();
 			}
 		}, {
@@ -9667,12 +9698,8 @@
 					return false;
 				}
 	
-				// console.log(`Inside square -> x = ${x} vs (${center - offset} || ${center + offset} = ${x < center - offset && x > center + offset}) -> y = ${y} vs (${this.y} && ${this.height} ${y > this.y && y < this.height})`);
-	
 				var width = x > center ? center + offset - x : x - (center - offset),
 				    height = y - this.y;
-	
-				// console.log(`width: ${width} (${center + offset} - ${x}) | height: ${height} (${y} - ${this.y})`);
 	
 				return width * this.ratio > height ? true : false;
 			}
@@ -9698,13 +9725,21 @@
 	var Movement = __webpack_require__(14);
 	
 	var Dots = (function () {
+	
+		// The wrapper Class for the dots functionality. Specifically the rendering
+		// and animation loop sequence. The more detailer dot generation and
+		// movement calculations are controlled by modules nested within this Class
+		// structure.
+	
 		function Dots(Pin) {
 			_classCallCheck(this, Dots);
 	
 			this.Pin = Pin;
+			// Size of a dot.
 			this.radius = 5;
+			// Total amount (shape + anomalies) of dots.
 			this.total = 500;
-			this.color = this.setColors();
+			// All dot instances
 			this.instances = [];
 			this.Generate = new Generate(Pin, this);
 			this.Movement = new Movement(Pin, this);
@@ -9713,15 +9748,6 @@
 		}
 	
 		_createClass(Dots, [{
-			key: 'setColors',
-			value: function setColors() {
-	
-				return {
-					light: '#13B5EA',
-					dark: '#0D85AB'
-				};
-			}
-		}, {
 			key: 'renderDots',
 			value: function renderDots() {
 	
@@ -9782,11 +9808,16 @@
 	var $ = __webpack_require__(6);
 	
 	var Generate = (function () {
+	
+		// Creates each of the dot instances on load along with their various
+		// properties in which their behaviour / aesthetic is governed by.
+	
 		function Generate(Pin, Dots) {
 			_classCallCheck(this, Generate);
 	
 			this.Pin = Pin;
 			this.Dots = Dots;
+			// Amount of incremental steps in the displacement array.
 			this.steps = 100;
 	
 			this.displacement = this.generateDisplacement();
@@ -9818,8 +9849,6 @@
 						color: color,
 						anomaly: false
 					};
-	
-					// console.log(instances[i]);
 				}
 	
 				return instances;
@@ -9828,7 +9857,15 @@
 			key: 'generateAnomalies',
 			value: function generateAnomalies() {
 	
-				var percent = 10; // anomaly conversion anount (in %)
+				// Too add some diversity to the execution we create dots called
+				// anomalies. These dots to not conform to the restrictions of the pin
+				// shape and instead are contained by the radius of the very edge of the
+				// canvas area. Visually this is more appealing as there not a huge void
+				// of redundant space when the icon is completely formed in the venter
+				// of the canvas.
+	
+				// What percentage of the total dots on the canvas will be anomalies.
+				var percent = 10;
 				var increment = this.Dots.total / (percent / 100 * this.Dots.total);
 	
 				for (var i = 0; i < this.Dots.total; i += increment) {
@@ -9840,6 +9877,16 @@
 			key: 'generateDisplacement',
 			value: function generateDisplacement() {
 	
+				// When the dots are very first generated on the page there is a void in
+				// the middle with no dot population immediately followed by a heavy
+				// consolidation of dot instances that exponentially fade away to the
+				// outer edges of the canvas area. This function much like the angle
+				// generation in the Movement Class - creates an array with an
+				// exponential displacement sequence. this sequence only focus on the
+				// hypotenuse of the displacement triangle (the +/-x, +/-y will be
+				// calculated afterwards).
+	
+				// The radius of the centeral void.
 				var offset = 200;
 				var max = this.Pin.center - this.Dots.radius - offset;
 				var increment = Math.pow(max, 1 / (this.steps - 1));
@@ -9856,6 +9903,10 @@
 			key: 'displacementOffset',
 			value: function displacementOffset(displacement, offset) {
 	
+				// After calculating the zero based exponential displacement array we
+				// add on the central void offset to push the max displacement right to
+				// the canvas area edge.
+	
 				for (var i = 0; i < this.steps; i += 1) {
 	
 					displacement[i] += Math.floor(offset);
@@ -9867,11 +9918,9 @@
 			key: 'locateDot',
 			value: function locateDot() {
 	
-				// displacement = - / + ?
-				// random x value
-				// x = - / + ?
-				// find y with displacement and x
-				// y = - / + ?
+				// Randomises the x and y position (i.e. +/-x, +/-y,) relative to the
+				// random hypotenuse value fetched from the exponential displacement
+				// array.
 	
 				var displacement = this.setDisplacement();
 				var x = this.setXaxis(displacement);
@@ -9884,6 +9933,8 @@
 			key: 'setDisplacement',
 			value: function setDisplacement() {
 	
+				// Get a random hypotenuse displacement value.
+	
 				var i = this.Pin.Helper.randomise({ max: this.steps - 1 });
 				var displacement = this.displacement[i];
 	
@@ -9893,17 +9944,19 @@
 			key: 'setXaxis',
 			value: function setXaxis(displacement) {
 	
-				var x = this.Pin.Helper.randomise({ max: Math.floor(displacement) });
+				// Generate a random x value for the right angle triangle (so that we
+				// now have width and hypotenuse data).
 	
-				return x;
+				return this.Pin.Helper.randomise({ max: Math.floor(displacement) });
 			}
 		}, {
 			key: 'setYaxis',
 			value: function setYaxis(x, displacement) {
 	
-				var y = Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
+				// With the width (x) and hypotenuse data we can use Pythagoras to
+				// calculate the height (y) value of the right angle triangle.
 	
-				return y;
+				return Math.sqrt(Math.pow(displacement, 2) - Math.pow(x, 2));
 			}
 		}, {
 			key: 'setOrientation',
@@ -9911,6 +9964,10 @@
 				for (var _len = arguments.length, coordinates = Array(_len), _key = 0; _key < _len; _key++) {
 					coordinates[_key] = arguments[_key];
 				}
+	
+				// With the x, y values now calculated we randomise their orientation by
+				// turning them positive and negative independent from each other. This
+				// gives the dots a nice spread around the entire canvas circumference.
 	
 				for (var i = 0; i < coordinates.length; i += 1) {
 	
@@ -9928,20 +9985,38 @@
 			key: 'setAngle',
 			value: function setAngle() {
 	
-				var angle = this.Pin.Helper.randomise({ max: 359 });
+				// Sets the dots trajectory angle. This is different from its initial
+				// placement as it ties into the movement animation. This gives the Dot
+				// an intial direction in which to build its trajectory from (between 0
+				// and 359 degrees).
 	
-				return angle;
+				return this.Pin.Helper.randomise({ max: 359 });
 			}
 		}, {
 			key: 'setSpeed',
 			value: function setSpeed() {
 	
-				var speed = Math.random() * 2.5 + 1.5;
-				return 1.5; // this.Pin.Helper.round();
+				// Randomises a speed that persists for each dot thought its lifecycle.
+				//
+				// NOTE: The minimum dot speed must always exceed the rings animation
+				// increment. If not the a dot instance can get caught in the “dead
+				// zone” (outside of the rings relevance area) with no way to get back
+				// ahead of the transition speed again (this causes an infinite loop).
+	
+				var speed = Math.random() + 1;
+	
+				return this.Pin.Helper.round(speed);
 			}
 		}, {
 			key: 'setSteps',
 			value: function setSteps() {
+	
+				// Randomises the current step value of the Dot. This is a value that
+				// will decrease ever time a dot moves (-=1 per animation loop). Once it
+				// hits zero a new angle is given to the particular dot to change its
+				// trajectory. Step values are also reset if a dot hits the ring edge
+				// and needs to have its trajectory angle forcibly updated to keep it
+				// within the set bounds.
 	
 				return this.Pin.Helper.randomise({ min: 10, max: 40 });
 			}
@@ -9949,9 +10024,7 @@
 			key: 'setColor',
 			value: function setColor() {
 	
-				var tone = this.Pin.Helper.boolean() ? 'light' : 'dark';
-	
-				return this.Dots.color[tone];
+				return this.Pin.Helper.boolean() ? '#13B5EA' : '#0D85AB';
 			}
 		}]);
 	
@@ -9973,6 +10046,9 @@
 	var $ = __webpack_require__(6);
 	
 	var Movement = (function () {
+	
+		// Updates the dots properties on an per animation loop basis.
+	
 		function Movement(Pin, Dots) {
 			_classCallCheck(this, Movement);
 	
@@ -9984,6 +10060,14 @@
 		_createClass(Movement, [{
 			key: 'generateAngles',
 			value: function generateAngles() {
+	
+				// Originally each dot had its angle procedurally generated on the fly -
+				// this was unfortunately too CPU heavy for the amount of dots needed
+				// for this execution. Instead now on load we calculate each x,y
+				// displacement scenario for every degree in a 360 scope and store them
+				// in an array. This makes it far more performant to retreive a dots
+				// displacement per animation cycle as the heavy lifting is cached in
+				// the “angle” reference.
 	
 				var angles = [];
 	
@@ -9997,22 +10081,30 @@
 				return angles;
 			}
 		}, {
-			key: 'convertToRadians',
-			value: function convertToRadians(degrees) {
-	
-				// radians : degrees = 1 : 57.2958
-				var ratio = 57.2958;
-	
-				return degrees / ratio;
-			}
-		}, {
 			key: 'reflectQuadrants',
 			value: function reflectQuadrants(i, angles, x, y) {
 	
-				angles[i + 90 * 0] = { x: x, y: y };
-				angles[i + 90 * 1] = { x: x, y: y * -1 };
-				angles[i + 90 * 2] = { x: x * -1, y: y * -1 };
-				angles[i + 90 * 3] = { x: x * -1, y: y };
+				// Instead of looping around the full 360 degrees and performing the
+				// appropriate trig calculations we instead speed things up by focusing
+				// on the only positive x,y 90 degree quadrant on the canvas and then
+				// reflect those displacement references over onto the other remaining
+				// quarters.
+				//
+				//   (4)     |     (1)
+				//    -x, +y | +x, +y
+				//           |
+				//   -------(c)--------
+				//           |
+				//    -x, -y | +x, -y
+				//   (3)     |     (2)
+				//
+				// (1) = Original calculations are done here
+				// (c) = Canvas center (0, 0)
+	
+				angles[i + 90 * 0] = { x: x, y: y }; // (1)
+				angles[i + 90 * 1] = { x: x, y: y * -1 }; // (2)
+				angles[i + 90 * 2] = { x: x * -1, y: y * -1 }; // (3)
+				angles[i + 90 * 3] = { x: x * -1, y: y }; // (4)
 	
 				return angles;
 			}
@@ -10020,31 +10112,27 @@
 			key: 'calculateOffset',
 			value: function calculateOffset(i) {
 	
-				var displacement = 1;
-				var degrees = this.convertToRadians(i);
-				var x = Math.sin(degrees) * displacement;
-				var y = Math.cos(degrees) * displacement;
+				// We know the current angle (i = position i the 360 degree for loop)
+				// and we know the hypotenuse (1px = the ratio that the dots speed
+				// variable will multiple on). With those two bits of information we can
+				// use Trigonometry to find the x, y (width, height of the right angle
+				// triangle).
+	
+				var degrees = this.Pin.Helper.convertToRadians(i);
+				var x = Math.sin(degrees);
+				var y = Math.cos(degrees);
 	
 				return {
 					x: this.Pin.Helper.round(x),
 					y: this.Pin.Helper.round(y)
 				};
 			}
-	
-			//
-			//
-			//
-			//
-			//
-			//
-			//
-	
 		}, {
 			key: 'updateDotProperties',
 			value: function updateDotProperties() {
 	
-				// https://jsbin.com/suvebotoxi/edit?js,console
-				// https://jsbin.com/rivojuyixe/edit?js,console
+				// Updates each dot instance with new x, y values and queries it current
+				// step / reference properties.
 	
 				var instances = this.Dots.instances;
 	
@@ -10053,15 +10141,9 @@
 					var instance = instances[i];
 					var updates = this.scrutiniseRelevance(instance);
 	
-					// console.log(updates);
-	
 					// if the relevance needed to be rectified then force steps update!
 					updates.steps = this.updateSteps(instance.steps, updates.redirect);
 					updates.reference = updates.redirect || updates.steps.reset ? this.updateAngle(instance.reference, updates.redirect) : instance.reference;
-	
-					// instance.steps = this.updateSteps(instance);
-					// instance.reference = instance.steps.reset ? this.updateAngle(instance) : instance.reference;
-					// const coordinates = this.updateTrajectory(instance);
 	
 					instances[i] = {
 						x: this.Pin.Helper.round(updates.x),
@@ -10080,12 +10162,14 @@
 			key: 'updateSteps',
 			value: function updateSteps(value, redirect) {
 	
-				// console.log(`before ${steps}`);
+				// Decrease the “step” count by one per animation loop. If the dot
+				// needed to be redirected as result of exceeding its bounds then force
+				// the steps to reset.
+	
 				value -= 1;
 				var reset = value < 0;
 				value = reset || redirect ? this.Dots.Generate.setSteps() : value;
 	
-				// console.log(`after ${steps}, ${reset}`);
 				return {
 					value: value,
 					reset: reset
@@ -10095,19 +10179,19 @@
 			key: 'updateAngle',
 			value: function updateAngle(reference, redirect) {
 	
-				// console.log(`BEFORE updating angle -> ref = ${reference}, redirect ${redirect}`);
+				// Update the current angle reference for either a normal trajectory
+				// change (a small angle offset) or a when a dot has exceeded its bounds
+				// (a large angle offset).
 	
 				var min = redirect ? 30 : 10;
 				var max = redirect ? 45 : 25;
 				var i = this.Pin.Helper.randomise({ min: min, max: max });
-				reference = this.Pin.Helper.boolean() || redirect ? reference -= i : reference += i;
+				// Randomises which way the angle offset will deviate.
+				reference = this.Pin.Helper.boolean() ? reference -= i : reference += i;
 	
-				if (redirect) {
-	
-					// console.log(`hit wall! change to ${i} = ${reference}`);
-	
-				}
-	
+				// If the angle reference falls outside of the 0 - 359 angle
+				// circumference then loop the reference back around in a seamless
+				// manner.
 				if (reference >= 360) {
 	
 					reference = reference - 360;
@@ -10116,27 +10200,29 @@
 					reference = 360 - reference * -1;
 				}
 	
-				// console.log(`AFTER updating angle -> ref = ${reference}, redirect ${redirect}`);
 				return reference;
 			}
 		}, {
 			key: 'updateTrajectory',
 			value: function updateTrajectory(i, reference, x, y, speed) {
 	
-				// console.log(`i ${i} | reference ${reference} | x ${x}, y ${y}`);
+				// Gets the “proposed” new x, y displacement (these values still need to
+				// pass the relevance checks) based on the current angle reference.
 	
 				var angle = this.angles[reference];
 				x = angle.x < 0 ? x -= angle.x * speed * -1 : x += angle.x * speed;
 				y = angle.y < 0 ? y -= angle.y * speed * -1 : y += angle.y * speed;
-	
-				// console.log(`instance.x = ${x} vs angle.x = ${angle.x} | instance.y = ${y} vs angle.y = ${angle.y}`);
-				// console.log(`${angle.x < 0 ? 'negitive' : 'positive'} = ${x}, ${y}`);
 	
 				return { x: x, y: y };
 			}
 		}, {
 			key: 'scrutiniseRelevance',
 			value: function scrutiniseRelevance(instance) {
+	
+				// Update the dots current x, y values while making sure it new location
+				// still resides with in the relevant area of its set bounds. Depending
+				// on the dots anomaly status there will be different relevance
+				// parameters to query against.
 	
 				var anomaly = instance.anomaly ? 'canvas' : 'icon';
 				var reference = instance.reference;
@@ -10146,26 +10232,25 @@
 	
 				do {
 	
+					// If this is the first time through the while loop then the dot has
+					// yet to exceed its bounds so we keep the same trajectory angle
+					// reference. If NOT then we need to generate a new angle to test
+					// against as the last one was not deemed irrelevant.
 					reference = i === 0 ? reference : this.updateAngle(reference, true);
+					// Update the x, y trajectory based on the current reference set above.
 					coordinates = this.updateTrajectory(i, reference, instance.x, instance.y, instance.speed);
 					hypotenuse = this.calculateHypotenuse(coordinates.x, coordinates.y);
 	
 					i += 1;
-	
-					// if (i > 1) {
-					// 	console.log(`i ${i} | reference ${reference} | x ${coordinates.x}, y ${coordinates.y}`);
-					// }
-	
-					// } while(!this.Pin.Ring.testRelevance(hypotenuse));
-	
-					// } while(!this.Pin.Ring.testRelevance(hypotenuse) &&
-					// 		!this.Pin.Circle.testRelevance(hypotenuse));
 				} while (this[anomaly + 'Relevance'](coordinates.x, coordinates.y, hypotenuse));
 	
 				return {
 					x: coordinates.x,
 					y: coordinates.y,
-					redirect: i > 1, // how many times did the trajectory get resolved
+					// How many times did the trajectory get resolved (more than one ===
+					// the dot hit a bounding perimeter and needed to have its angle
+					// reset).
+					redirect: i > 1,
 					reference: reference
 				};
 			}
@@ -10173,17 +10258,28 @@
 			key: 'canvasRelevance',
 			value: function canvasRelevance(x, y, hypotenuse) {
 	
+				// The relevance check for dots with { anomaly: true } (makes sure the
+				// dots reside in the canvas maximum radius).
+	
 				return hypotenuse > this.Pin.center;
 			}
 		}, {
 			key: 'iconRelevance',
 			value: function iconRelevance(x, y, hypotenuse) {
 	
+				// The relevance check for dots with { anomaly: fase } (makes sure the
+				// dots reside in the pin icon’s shape elements).
+	
 				return !this.Pin.Shape.Ring.testRelevance(hypotenuse) && !this.Pin.Shape.Circle.testRelevance(hypotenuse) && !this.Pin.Shape.Triangle.testRelevance(x, y);
 			}
 		}, {
 			key: 'calculateHypotenuse',
 			value: function calculateHypotenuse(x, y) {
+	
+				// The hypotenuse is used to cross reference against circular bounding
+				// areas i.e. (the Shape “Ring” and “Circle” Class). The value is taken
+				// from the centre of the canvas (the origin point for the Shape’s
+				// circular elements).
 	
 				var center = this.Pin.center;
 				var width = x > center ? x - center : center - x;
@@ -10211,6 +10307,12 @@
 	var $ = __webpack_require__(6);
 	
 	var Heading = (function () {
+	
+		// Loop through and create an SVG instance for each of the letters in the
+		// icon heading. The text is splint into two parts “Xerocon” and “London
+		// 2016”. The injected heading text is then animated into view via a SASS
+		// transition mixin.
+	
 		function Heading(Pin) {
 			_classCallCheck(this, Heading);
 	
@@ -10225,7 +10327,6 @@
 			value: function createSvg(text) {
 	
 				var $wrapper = $('<div class="heading heading--' + text + '" />');
-				var svg = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve" />';
 				var paths = this[text + 'PathData']();
 				var html = '';
 	

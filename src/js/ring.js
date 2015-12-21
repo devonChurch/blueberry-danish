@@ -28,7 +28,7 @@ const Ring = class {
 
 			ctx.beginPath();
 			ctx.arc(center, center, radii[i], 0, Math.PI * 2, true);
-			ctx.strokeStyle = 'black';
+			ctx.strokeStyle = 'hotpink';
 			ctx.stroke();
 
 		}
@@ -37,7 +37,7 @@ const Ring = class {
 
 	updateOuterRing() {
 
-		this.currentOuter -= 1;
+		this.currentOuter -= 0.8;
 		this.relevanceOuter = this.restingOuter < this.currentOuter;
 
 	}

@@ -53,7 +53,7 @@ const Triangle = class {
 		ctx.lineTo(this.x + this.size, this.y);
 		ctx.lineTo(this.Pin.center, this.size / 2 * this.ratio + this.y);
 		ctx.lineTo(this.x, this.y);
-		ctx.strokeStyle = 'black';
+		ctx.strokeStyle = 'hotpink';
 		ctx.stroke();
 
 	}
@@ -85,12 +85,8 @@ const Triangle = class {
 
 		if ((x < center - offset || x > center + offset) || (y < this.y || y > this.height)) { return false; }
 
-		// console.log(`Inside square -> x = ${x} vs (${center - offset} || ${center + offset} = ${x < center - offset && x > center + offset}) -> y = ${y} vs (${this.y} && ${this.height} ${y > this.y && y < this.height})`);
-
 		let width = x > center ? (center + offset) - x : x - (center - offset),
 			height = y - this.y;
-
-		// console.log(`width: ${width} (${center + offset} - ${x}) | height: ${height} (${y} - ${this.y})`);
 
 		return width * this.ratio > height ? true : false;
 

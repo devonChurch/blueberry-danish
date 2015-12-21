@@ -4,27 +4,24 @@ const Movement = require('./movement');
 
 const Dots = class {
 
+	// The wrapper Class for the dots functionality. Specifically the rendering
+	// and animation loop sequence. The more detailer dot generation and
+	// movement calculations are controlled by modules nested within this Class
+	// structure.
+
 	constructor(Pin) {
 
 		this.Pin = Pin;
+		// Size of a dot.
 		this.radius = 5;
+		// Total amount (shape + anomalies) of dots.
 		this.total = 500;
-		this.color = this.setColors();
+		// All dot instances
 		this.instances = [];
 		this.Generate = new Generate(Pin, this);
 		this.Movement = new Movement(Pin, this);
 
 		this.moveDots();
-
-
-	}
-
-	setColors() {
-
-		return {
-			light: '#13B5EA',
-			dark: '#0D85AB'
-		};
 
 	}
 

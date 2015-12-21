@@ -2,6 +2,11 @@ const $ = require('jquery');
 
 const Heading = class {
 
+	// Loop through and create an SVG instance for each of the letters in the
+	// icon heading. The text is splint into two parts “Xerocon” and “London
+	// 2016”. The injected heading text is then animated into view via a SASS
+	// transition mixin.
+
 	constructor(Pin) {
 
 		this.Pin = Pin;
@@ -14,7 +19,6 @@ const Heading = class {
 	createSvg(text) {
 
 		const $wrapper = $(`<div class="heading heading--${text}" />`);
-		const svg = '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 38" xml:space="preserve" />';
 		const paths = this[`${text}PathData`]();
 		let html = '';
 

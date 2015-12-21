@@ -6,6 +6,20 @@ const Heading = require('./heading');
 
 const Pin = class {
 
+	// Wrapper for the “Pin icon” system. The hierarchy below depicts the Class
+	// based structure of this execution.
+	//
+	// -> PIN
+	//	  —> HELPER
+	//	  —> SHAPE
+	//	     -> RING
+	//	     -> CIRCLE
+	//	     -> TRIANGLE
+	//	  —> DOTS
+	//	     -> GENERATE
+	//	     -> MOVEMENT
+	//	  -> HEADING
+
 	constructor() {
 
 		this.$logo = $('#logo');
@@ -34,11 +48,14 @@ const Pin = class {
 
 	activateLogo() {
 
+		// Wait for the next CPU cycle otherwise the removeClass fn. is not
+		// triggered correctly.
+
 		setTimeout(() => {
 
 			this.$logo.removeClass('logo--dormant');
 
-		}, 0);
+		}, 100);
 
 	}
 

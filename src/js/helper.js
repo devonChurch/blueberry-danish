@@ -2,6 +2,8 @@ const $ = require('jquery');
 
 const Helper = class {
 
+	// A series of more “generic” functions uses across the execution.
+
 	constructor(Pin) {
 
 		this.Pin = Pin;
@@ -22,8 +24,19 @@ const Helper = class {
 
 	round(value) {
 
-		// Round value to 1 Decimal place
+		// Round value to 1 Decimal place (This helps lessen the computation
+		// burden when doing mass calculations to a large amount of decimal
+		// places).
+
 		return Math.round(value * 10) / 10;
+
+	}
+
+	convertToRadians(degrees) {
+
+		// radians : degrees = 1 : 57.2958
+
+		return degrees / 57.2958;
 
 	}
 

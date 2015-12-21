@@ -1,0 +1,106 @@
+.logo {
+    $size: 1000px;
+    background: black;
+    border-radius: 50%;
+    height: $size;
+    overflow: hidden;
+    width: $size;
+
+    &,
+    & > * {
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    & > * {
+        z-index: 1;
+    }
+
+    &:after {
+        $offset: 0;
+        background: {
+            image: url('/img/xerocon-background.jpg');
+            position: center center;
+            repeat: no-repeat;
+            size: cover;
+        }
+        bottom: $offset;
+        content: '';
+        display: block;
+        left: $offset;
+        opacity: 0.5;
+        position: absolute;
+        right: $offset;
+        top: $offset;
+        transition: 10s ease-out;
+        transition-property: opacity, transform;
+    }
+
+    &--dormant#{&}:after {
+        opacity: 0.25;
+        transform: scale(1.2);
+    }
+}
+
+.pin {
+    display: block;
+}
+
+@mixin transition($total, $delay: 0) {
+
+    @for $i from 1 through $total {
+
+        & .heading__svg:nth-of-type(#{$i}),
+        & .heading__svg:nth-of-type(#{$total - $i}) {
+            transition-delay: $delay + 7000 + (200 * $i) + ms;
+        }
+    }
+}
+
+$heading--offset: 240px;
+$heading--height: 38px;
+$heading--width: 200px;
+$heading--location: 31px;
+
+.heading {
+    height: $heading--height;
+    width: $heading--width;
+
+    &--xerocon {
+        fill: white;
+        margin-top: $heading--offset;
+
+        @include transition(
+            $total: 7,
+            $delay: 0
+        );
+    }
+
+    &--location {
+        fill: #13B5EA;
+        margin-top: $heading--offset + $heading--height;
+
+        @include transition(
+            $total: 10,
+            $delay: 1000
+        );
+    }
+
+    &__svg {
+        display: block;
+        height: $heading--height;
+        left: 0;
+        position: absolute;
+        top: 0;
+        transition: 1s ease-out;
+        transition-property: opacity, transform;
+        width: $heading--width;
+
+        .logo--dormant & {
+            opacity: 0;
+            transform: scale(0.8) translateY(20px);
+        }
+    }
+}

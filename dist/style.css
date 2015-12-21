@@ -1,0 +1,126 @@
+html {
+  box-sizing: border-box; }
+
+*, *:before, *:after {
+  box-sizing: inherit; }
+
+body {
+  margin: 0; }
+
+.logo {
+  background: black;
+  border-radius: 50%;
+  height: 1000px;
+  overflow: hidden;
+  width: 1000px; }
+  .logo,
+  .logo > * {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%); }
+  .logo > * {
+    z-index: 1; }
+  .logo:after {
+    background-image: url("/img/xerocon-background.jpg");
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    bottom: 0;
+    content: '';
+    display: block;
+    left: 0;
+    opacity: 0.5;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: 10s ease-out;
+    transition-property: opacity, -webkit-transform;
+    transition-property: opacity, transform;
+    transition-property: opacity, transform, -webkit-transform; }
+  .logo--dormant.logo:after {
+    opacity: 0.25;
+    -webkit-transform: scale(1.2);
+            transform: scale(1.2); }
+
+.pin {
+  display: block; }
+
+.heading {
+  height: 38px;
+  width: 200px; }
+  .heading--xerocon {
+    fill: white;
+    margin-top: 240px; }
+    .heading--xerocon .heading__svg:nth-of-type(1),
+    .heading--xerocon .heading__svg:nth-of-type(6) {
+      transition-delay: 7200ms; }
+    .heading--xerocon .heading__svg:nth-of-type(2),
+    .heading--xerocon .heading__svg:nth-of-type(5) {
+      transition-delay: 7400ms; }
+    .heading--xerocon .heading__svg:nth-of-type(3),
+    .heading--xerocon .heading__svg:nth-of-type(4) {
+      transition-delay: 7600ms; }
+    .heading--xerocon .heading__svg:nth-of-type(4),
+    .heading--xerocon .heading__svg:nth-of-type(3) {
+      transition-delay: 7800ms; }
+    .heading--xerocon .heading__svg:nth-of-type(5),
+    .heading--xerocon .heading__svg:nth-of-type(2) {
+      transition-delay: 8000ms; }
+    .heading--xerocon .heading__svg:nth-of-type(6),
+    .heading--xerocon .heading__svg:nth-of-type(1) {
+      transition-delay: 8200ms; }
+    .heading--xerocon .heading__svg:nth-of-type(7),
+    .heading--xerocon .heading__svg:nth-of-type(0) {
+      transition-delay: 8400ms; }
+  .heading--location {
+    fill: #13B5EA;
+    margin-top: 278px; }
+    .heading--location .heading__svg:nth-of-type(1),
+    .heading--location .heading__svg:nth-of-type(9) {
+      transition-delay: 8200ms; }
+    .heading--location .heading__svg:nth-of-type(2),
+    .heading--location .heading__svg:nth-of-type(8) {
+      transition-delay: 8400ms; }
+    .heading--location .heading__svg:nth-of-type(3),
+    .heading--location .heading__svg:nth-of-type(7) {
+      transition-delay: 8600ms; }
+    .heading--location .heading__svg:nth-of-type(4),
+    .heading--location .heading__svg:nth-of-type(6) {
+      transition-delay: 8800ms; }
+    .heading--location .heading__svg:nth-of-type(5),
+    .heading--location .heading__svg:nth-of-type(5) {
+      transition-delay: 9000ms; }
+    .heading--location .heading__svg:nth-of-type(6),
+    .heading--location .heading__svg:nth-of-type(4) {
+      transition-delay: 9200ms; }
+    .heading--location .heading__svg:nth-of-type(7),
+    .heading--location .heading__svg:nth-of-type(3) {
+      transition-delay: 9400ms; }
+    .heading--location .heading__svg:nth-of-type(8),
+    .heading--location .heading__svg:nth-of-type(2) {
+      transition-delay: 9600ms; }
+    .heading--location .heading__svg:nth-of-type(9),
+    .heading--location .heading__svg:nth-of-type(1) {
+      transition-delay: 9800ms; }
+    .heading--location .heading__svg:nth-of-type(10),
+    .heading--location .heading__svg:nth-of-type(0) {
+      transition-delay: 10000ms; }
+  .heading__svg {
+    display: block;
+    height: 38px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: 1s ease-out;
+    transition-property: opacity, -webkit-transform;
+    transition-property: opacity, transform;
+    transition-property: opacity, transform, -webkit-transform;
+    width: 200px; }
+    .logo--dormant .heading__svg {
+      opacity: 0;
+      -webkit-transform: scale(0.8) translateY(20px);
+              transform: scale(0.8) translateY(20px); }
+
+/*# sourceMappingURL=style.css.map*/

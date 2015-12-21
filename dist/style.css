@@ -39,10 +39,6 @@ body {
     transition-property: opacity, -webkit-transform;
     transition-property: opacity, transform;
     transition-property: opacity, transform, -webkit-transform; }
-  .logo--dormant.logo:after {
-    opacity: 0.25;
-    -webkit-transform: scale(1.2);
-            transform: scale(1.2); }
 
 .pin {
   display: block; }

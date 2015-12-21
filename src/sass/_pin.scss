@@ -37,11 +37,6 @@
         transition: 10s ease-out;
         transition-property: opacity, transform;
     }
-
-    &--dormant#{&}:after {
-        opacity: 0.25;
-        transform: scale(1.2);
-    }
 }
 
 .pin {

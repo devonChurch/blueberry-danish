@@ -46,6 +46,13 @@ const Triangle = class {
 
 	generateStencil() {
 
+		// This function is for debug purposes ONLY.
+		// Controlled via Pin.Dots.moveDots();
+		// It renders the current location of the shape on the canvas with a
+		// pink stroke. This is great for testing out your math but the ultimate
+		// goal is for the shapes dimensions to be represented by the particle
+		// system.
+
 		const ctx = this.Pin.ctx;
 
 		ctx.beginPath();

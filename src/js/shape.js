@@ -25,8 +25,11 @@ const Shape = class {
 
 	updateDimensions() {
 
+		// Animate the outer ring from the age of the canvas down to its icon dimension.
 		if (this.Ring.relevanceOuter) { this.Ring.updateOuterRing(); }
+		// Pause between the outer ring finishing and the inner ring starting.
 		if (!this.Ring.relevanceOuter) { this.pause -= 1; }
+		// After the pause is complete animate the inner ring to its icon dimension.
 		if (!this.Ring.relevanceOuter && this.pause < 0 && this.Ring.relevanceInner) { this.Ring.updateInnerRing(); }
 
 	}

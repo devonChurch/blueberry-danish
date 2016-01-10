@@ -1,0 +1,11 @@
+{
+  "name": "blueberry-danish",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": {
+      "version": "2.1.4",
+      "from": "jquery@>=2.1.4 <3.0.0",
+      "resolved": "https://registry.npmjs.org/jquery/-/jquery-2.1.4.tgz"
+    }
+  }
+}

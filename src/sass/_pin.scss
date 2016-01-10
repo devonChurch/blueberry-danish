@@ -37,11 +37,6 @@
         transition: 10s ease-out;
         transition-property: opacity, transform;
     }
-
-    &--dormant#{&}:after {
-        opacity: 0.25;
-        transform: scale(1.2);
-    }
 }
 
 .pin {
@@ -54,7 +49,7 @@
 
         & .heading__svg:nth-of-type(#{$i}),
         & .heading__svg:nth-of-type(#{$total - $i}) {
-            transition-delay: $delay + 7000 + (200 * $i) + ms;
+            transition-delay: $delay + (200 * $i) + ms;
         }
     }
 }
@@ -98,7 +93,7 @@ $heading--location: 31px;
         transition-property: opacity, transform;
         width: $heading--width;
 
-        .logo--dormant & {
+        .logo--hide-text & {
             opacity: 0;
             transform: scale(0.8) translateY(20px);
         }

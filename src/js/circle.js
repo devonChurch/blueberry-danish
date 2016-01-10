@@ -12,6 +12,13 @@ const Circle = class {
 
 	generateStencil() {
 
+		// This function is for debug purposes ONLY.
+		// Controlled via Pin.Dots.moveDots();
+		// It renders the current location of the shape on the canvas with a
+		// pink stroke. This is great for testing out your math but the ultimate
+		// goal is for the shapes dimensions to be represented by the particle
+		// system.
+
 		const ctx = this.Pin.ctx;
 		const center = this.Pin.center;
 
@@ -23,6 +30,8 @@ const Circle = class {
 	}
 
 	testRelevance(hypotenuse) {
+
+		// Test wether the current Dot instance resides inside the circle shape.
 
 		return hypotenuse < this.radius ? true : false;
 

@@ -32,8 +32,6 @@ const Pin = class {
 		this.Dots = new Dots(this);
 		this.Heading = new Heading(this);
 
-		this.activateLogo();
-
 	}
 
 	generateCanvas() {
@@ -48,14 +46,12 @@ const Pin = class {
 
 	activateLogo() {
 
-		// Wait for the next CPU cycle otherwise the removeClass fn. is not
-		// triggered correctly.
+		// Remove the hidden text class to begin the CSS transition that reveals
+		// the Xerocon text. To ensure that we do not keep pinging the DOM each
+		// time this function runs we rewrite it into an empty shell.
 
-		setTimeout(() => {
-
-			this.$logo.removeClass('logo--dormant');
-
-		}, 100);
+		this.$logo.removeClass('logo--hide-text');
+		this.activateLogo = () => {};
 
 	}
 

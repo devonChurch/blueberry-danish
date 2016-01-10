@@ -51,58 +51,58 @@ body {
     margin-top: 240px; }
     .heading--xerocon .heading__svg:nth-of-type(1),
     .heading--xerocon .heading__svg:nth-of-type(6) {
-      transition-delay: 7200ms; }
+      transition-delay: 200ms; }
     .heading--xerocon .heading__svg:nth-of-type(2),
     .heading--xerocon .heading__svg:nth-of-type(5) {
-      transition-delay: 7400ms; }
+      transition-delay: 400ms; }
     .heading--xerocon .heading__svg:nth-of-type(3),
     .heading--xerocon .heading__svg:nth-of-type(4) {
-      transition-delay: 7600ms; }
+      transition-delay: 600ms; }
     .heading--xerocon .heading__svg:nth-of-type(4),
     .heading--xerocon .heading__svg:nth-of-type(3) {
-      transition-delay: 7800ms; }
+      transition-delay: 800ms; }
     .heading--xerocon .heading__svg:nth-of-type(5),
     .heading--xerocon .heading__svg:nth-of-type(2) {
-      transition-delay: 8000ms; }
+      transition-delay: 1000ms; }
     .heading--xerocon .heading__svg:nth-of-type(6),
     .heading--xerocon .heading__svg:nth-of-type(1) {
-      transition-delay: 8200ms; }
+      transition-delay: 1200ms; }
     .heading--xerocon .heading__svg:nth-of-type(7),
     .heading--xerocon .heading__svg:nth-of-type(0) {
-      transition-delay: 8400ms; }
+      transition-delay: 1400ms; }
   .heading--location {
     fill: #13B5EA;
     margin-top: 278px; }
     .heading--location .heading__svg:nth-of-type(1),
     .heading--location .heading__svg:nth-of-type(9) {
-      transition-delay: 8200ms; }
+      transition-delay: 1200ms; }
     .heading--location .heading__svg:nth-of-type(2),
     .heading--location .heading__svg:nth-of-type(8) {
-      transition-delay: 8400ms; }
+      transition-delay: 1400ms; }
     .heading--location .heading__svg:nth-of-type(3),
     .heading--location .heading__svg:nth-of-type(7) {
-      transition-delay: 8600ms; }
+      transition-delay: 1600ms; }
     .heading--location .heading__svg:nth-of-type(4),
     .heading--location .heading__svg:nth-of-type(6) {
-      transition-delay: 8800ms; }
+      transition-delay: 1800ms; }
     .heading--location .heading__svg:nth-of-type(5),
     .heading--location .heading__svg:nth-of-type(5) {
-      transition-delay: 9000ms; }
+      transition-delay: 2000ms; }
     .heading--location .heading__svg:nth-of-type(6),
     .heading--location .heading__svg:nth-of-type(4) {
-      transition-delay: 9200ms; }
+      transition-delay: 2200ms; }
     .heading--location .heading__svg:nth-of-type(7),
     .heading--location .heading__svg:nth-of-type(3) {
-      transition-delay: 9400ms; }
+      transition-delay: 2400ms; }
     .heading--location .heading__svg:nth-of-type(8),
     .heading--location .heading__svg:nth-of-type(2) {
-      transition-delay: 9600ms; }
+      transition-delay: 2600ms; }
     .heading--location .heading__svg:nth-of-type(9),
     .heading--location .heading__svg:nth-of-type(1) {
-      transition-delay: 9800ms; }
+      transition-delay: 2800ms; }
     .heading--location .heading__svg:nth-of-type(10),
     .heading--location .heading__svg:nth-of-type(0) {
-      transition-delay: 10000ms; }
+      transition-delay: 3000ms; }
   .heading__svg {
     display: block;
     height: 38px;
@@ -114,7 +114,7 @@ body {
     transition-property: opacity, transform;
     transition-property: opacity, transform, -webkit-transform;
     width: 200px; }
-    .logo--dormant .heading__svg {
+    .logo--hide-text .heading__svg {
       opacity: 0;
       -webkit-transform: scale(0.8) translateY(20px);
               transform: scale(0.8) translateY(20px); }

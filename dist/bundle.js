@@ -102,8 +102,6 @@
 			this.Shape = new Shape(this);
 			this.Dots = new Dots(this);
 			this.Heading = new Heading(this);
-	
-			this.activateLogo();
 		}
 	
 		_createClass(Pin, [{
@@ -119,15 +117,13 @@
 		}, {
 			key: 'activateLogo',
 			value: function activateLogo() {
-				var _this = this;
 	
-				// Wait for the next CPU cycle otherwise the removeClass fn. is not
-				// triggered correctly.
+				// Remove the hidden text class to begin the CSS transition that reveals
+				// the Xerocon text. To ensure that we do not keep pinging the DOM each
+				// time this function runs we rewrite it into an empty shell.
 	
-				setTimeout(function () {
-	
-					_this.$logo.removeClass('logo--dormant');
-				}, 100);
+				this.$logo.removeClass('logo--hide-text');
+				this.activateLogo = function () {};
 			}
 		}]);
 	
@@ -9453,14 +9449,22 @@
 			key: 'updateDimensions',
 			value: function updateDimensions() {
 	
+				// Animate the outer ring from the age of the canvas down to its icon dimension.
 				if (this.Ring.relevanceOuter) {
 					this.Ring.updateOuterRing();
 				}
+	
+				// Pause between the outer ring finishing and the inner ring starting.
 				if (!this.Ring.relevanceOuter) {
 					this.pause -= 1;
 				}
+	
+				// After the pause is complete animate the inner ring to its icon dimension.
 				if (!this.Ring.relevanceOuter && this.pause < 0 && this.Ring.relevanceInner) {
+	
 					this.Ring.updateInnerRing();
+					// Ping the DOM to reveal the Xerocon text.
+					this.Pin.activateLogo();
 				}
 			}
 		}, {
@@ -9500,10 +9504,12 @@
 			this.Pin = Pin;
 			this.Shape = Shape;
 	
+			// Outer ring properties.
 			this.relevanceOuter = true;
 			this.restingOuter = 150;
 			this.currentOuter = this.Pin.center;
 	
+			// Inner ring properties
 			this.relevanceInner = true;
 			this.restingInner = 104;
 			this.currentInner = 25;
@@ -9512,6 +9518,13 @@
 		_createClass(Ring, [{
 			key: 'generateStencil',
 			value: function generateStencil() {
+	
+				// This function is for debug purposes ONLY.
+				// Controlled via Pin.Dots.moveDots();
+				// It renders the current location of the shape on the canvas with a
+				// pink stroke. This is great for testing out your math but the ultimate
+				// goal is for the shapes dimensions to be represented by the particle
+				// system.
 	
 				var ctx = this.Pin.ctx;
 				var center = this.Pin.center;
@@ -9525,6 +9538,9 @@
 					ctx.stroke();
 				}
 			}
+	
+			// Animate the inner and outer ring...
+	
 		}, {
 			key: 'updateOuterRing',
 			value: function updateOuterRing() {
@@ -9542,6 +9558,9 @@
 		}, {
 			key: 'testRelevance',
 			value: function testRelevance(hypotenuse) {
+	
+				// Test wether the current Dot instance resides inside the outer ring
+				// and outside the inner ring.
 	
 				return hypotenuse < this.currentOuter && hypotenuse > this.currentInner ? true : false;
 			}
@@ -9577,6 +9596,13 @@
 			key: 'generateStencil',
 			value: function generateStencil() {
 	
+				// This function is for debug purposes ONLY.
+				// Controlled via Pin.Dots.moveDots();
+				// It renders the current location of the shape on the canvas with a
+				// pink stroke. This is great for testing out your math but the ultimate
+				// goal is for the shapes dimensions to be represented by the particle
+				// system.
+	
 				var ctx = this.Pin.ctx;
 				var center = this.Pin.center;
 	
@@ -9588,6 +9614,8 @@
 		}, {
 			key: 'testRelevance',
 			value: function testRelevance(hypotenuse) {
+	
+				// Test wether the current Dot instance resides inside the circle shape.
 	
 				return hypotenuse < this.radius ? true : false;
 			}
@@ -9656,6 +9684,13 @@
 		}, {
 			key: 'generateStencil',
 			value: function generateStencil() {
+	
+				// This function is for debug purposes ONLY.
+				// Controlled via Pin.Dots.moveDots();
+				// It renders the current location of the shape on the canvas with a
+				// pink stroke. This is great for testing out your math but the ultimate
+				// goal is for the shapes dimensions to be represented by the particle
+				// system.
 	
 				var ctx = this.Pin.ctx;
 	

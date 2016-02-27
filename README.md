@@ -10,7 +10,7 @@ Location pin icon animation based on a particle system using the [Xerocon](https
 
 - Clone this repository
 ```
-git clone https://github.com/devonChurch/teriyaki-unagi.git
+git clone https://github.com/devonChurch/blueberry-danish.git
 ```
 
 - Install project dependancies
